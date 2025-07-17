@@ -60,7 +60,13 @@ namespace VisitorManagementSystem.Controllers
 
             try
             {
-                var userId = int.Parse(User.FindFirst("sub")?.Value ?? "0");
+                var userIdClaim = User.FindFirst("sub")?.Value;
+                Console.WriteLine($"JWT sub claim: '{userIdClaim}'");
+                
+                var userId = int.Parse(userIdClaim ?? "0");
+                Console.WriteLine($"Parsed user ID: {userId}");
+                _logger.LogInformation($"Change password request for user ID: {userId}");
+                
                 var success = await _userService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
                 
                 if (!success)
@@ -72,6 +78,27 @@ namespace VisitorManagementSystem.Controllers
             {
                 _logger.LogError(ex, "Error changing password for user");
                 return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost("test-hash")]
+        [AllowAnonymous]
+        public ActionResult TestHash([FromBody] TestHashRequest request)
+        {
+            try
+            {
+                var hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                var verify = BCrypt.Net.BCrypt.Verify(request.Password, hash);
+                
+                return Ok(new { 
+                    password = request.Password,
+                    hash = hash,
+                    verify = verify 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }
@@ -86,5 +113,10 @@ namespace VisitorManagementSystem.Controllers
     {
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class TestHashRequest
+    {
+        public string Password { get; set; } = string.Empty;
     }
 }

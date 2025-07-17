@@ -97,6 +97,13 @@ namespace VisitorManagementSystem.Controllers
                 user.FullName = request.FullName;
                 user.Role = request.Role;
 
+                // If password is provided, update it
+                if (!string.IsNullOrEmpty(request.Password))
+                {
+                    Console.WriteLine($"Admin updating password for user {user.Username}");
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                }
+
                 var updatedUser = await _userService.UpdateUserAsync(user);
                 return Ok(updatedUser);
             }
@@ -143,5 +150,6 @@ namespace VisitorManagementSystem.Controllers
         public string Username { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string? Password { get; set; }
     }
 }

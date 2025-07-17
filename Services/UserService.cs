@@ -42,6 +42,7 @@ namespace VisitorManagementSystem.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
+                    new Claim("sub", user.Id.ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role),
@@ -109,7 +110,20 @@ namespace VisitorManagementSystem.Services
         public async Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword)
         {
             var user = await _context.Users.FindAsync(userId);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+            if (user == null)
+            {
+                Console.WriteLine($"User with ID {userId} not found");
+                return false;
+            }
+
+            Console.WriteLine($"ChangePassword - User: {user.Username}, ID: {user.Id}");
+            Console.WriteLine($"Current password provided: '{currentPassword}'");
+            Console.WriteLine($"Stored hash: {user.PasswordHash}");
+            
+            bool passwordVerified = BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash);
+            Console.WriteLine($"Password verification result: {passwordVerified}");
+            
+            if (!passwordVerified)
                 return false;
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);

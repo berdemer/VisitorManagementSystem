@@ -69,32 +69,6 @@ class AdminApp {
             logoutBtn.addEventListener('click', () => this.logout());
         }
 
-        // Change password button
-        const changePasswordBtn = document.getElementById('changePasswordBtn');
-        if (changePasswordBtn) {
-            changePasswordBtn.addEventListener('click', () => this.showChangePasswordModal());
-        }
-
-        // Password change form
-        const savePasswordChange = document.getElementById('savePasswordChange');
-        if (savePasswordChange) {
-            savePasswordChange.addEventListener('click', () => this.changePassword());
-        }
-
-        // Password visibility toggles
-        const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
-        const toggleNewPassword = document.getElementById('toggleNewPassword');
-        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-        
-        if (toggleCurrentPassword) {
-            toggleCurrentPassword.addEventListener('click', () => this.togglePasswordVisibility('currentPassword', 'toggleCurrentPassword'));
-        }
-        if (toggleNewPassword) {
-            toggleNewPassword.addEventListener('click', () => this.togglePasswordVisibility('newPassword', 'toggleNewPassword'));
-        }
-        if (toggleConfirmPassword) {
-            toggleConfirmPassword.addEventListener('click', () => this.togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword'));
-        }
 
         // Visitors tab events
         const filterDate = document.getElementById('filterDate');
@@ -392,6 +366,11 @@ class AdminApp {
             const saveUser = document.getElementById('saveUser');
             if (saveUser) {
                 saveUser.addEventListener('click', () => this.saveUser());
+            }
+
+            const changePasswordCheck = document.getElementById('changePasswordCheck');
+            if (changePasswordCheck) {
+                changePasswordCheck.addEventListener('change', () => this.toggleNewPasswordField());
             }
 
             // Mail Settings events
@@ -1064,14 +1043,34 @@ class AdminApp {
             document.getElementById('userRole').value = user.role;
             document.getElementById('passwordField').style.display = 'none';
             document.getElementById('userPassword').required = false;
+            document.getElementById('changePasswordField').style.display = 'block';
+            document.getElementById('changePasswordCheck').checked = false;
+            document.getElementById('newPasswordField').style.display = 'none';
+            document.getElementById('userNewPassword').required = false;
         } else {
             document.getElementById('userModalTitle').textContent = 'Yeni Kullanıcı';
             form.reset();
             document.getElementById('passwordField').style.display = 'block';
             document.getElementById('userPassword').required = true;
+            document.getElementById('changePasswordField').style.display = 'none';
+            document.getElementById('newPasswordField').style.display = 'none';
         }
         
         modal.show();
+    }
+
+    toggleNewPasswordField() {
+        const changePasswordCheck = document.getElementById('changePasswordCheck');
+        const newPasswordField = document.getElementById('newPasswordField');
+        const userNewPassword = document.getElementById('userNewPassword');
+        
+        if (changePasswordCheck.checked) {
+            newPasswordField.style.display = 'block';
+            userNewPassword.required = true;
+        } else {
+            newPasswordField.style.display = 'none';
+            userNewPassword.required = false;
+        }
     }
 
     async saveUser() {
@@ -1090,13 +1089,23 @@ class AdminApp {
 
         const userId = document.getElementById('userId').value;
         const password = document.getElementById('userPassword').value;
+        const changePasswordCheck = document.getElementById('changePasswordCheck').checked;
+        const newPassword = document.getElementById('userNewPassword').value;
 
         try {
             let response;
             
             if (userId) {
-                response = await this.apiCall(`/user/${userId}`, 'PUT', userData);
+                // Update existing user
+                if (changePasswordCheck && newPassword) {
+                    // Update with new password
+                    response = await this.apiCall(`/user/${userId}`, 'PUT', { ...userData, password: newPassword });
+                } else {
+                    // Update without password change
+                    response = await this.apiCall(`/user/${userId}`, 'PUT', userData);
+                }
             } else {
+                // Create new user
                 response = await this.apiCall('/user', 'POST', { ...userData, password });
             }
 
@@ -2190,94 +2199,6 @@ class AdminApp {
         }
     }
 
-    // Password change methods
-    showChangePasswordModal() {
-        const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
-        const form = document.getElementById('changePasswordForm');
-        
-        // Reset form
-        form.reset();
-        
-        // Reset password field types
-        document.getElementById('currentPassword').type = 'password';
-        document.getElementById('newPassword').type = 'password';
-        document.getElementById('confirmPassword').type = 'password';
-        
-        // Reset toggle button icons
-        document.querySelector('#toggleCurrentPassword i').className = 'bi bi-eye';
-        document.querySelector('#toggleNewPassword i').className = 'bi bi-eye';
-        document.querySelector('#toggleConfirmPassword i').className = 'bi bi-eye';
-        
-        modal.show();
-    }
-
-    async changePassword() {
-        const form = document.getElementById('changePasswordForm');
-        
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // Validate passwords match
-        if (newPassword !== confirmPassword) {
-            this.showError('Yeni şifreler eşleşmiyor');
-            return;
-        }
-
-        // Validate password length
-        if (newPassword.length < 6) {
-            this.showError('Yeni şifre en az 6 karakter olmalıdır');
-            return;
-        }
-
-        // Validate not same as current
-        if (currentPassword === newPassword) {
-            this.showError('Yeni şifre mevcut şifreden farklı olmalıdır');
-            return;
-        }
-
-        const changePasswordData = {
-            currentPassword: currentPassword,
-            newPassword: newPassword
-        };
-
-        const btn = document.getElementById('savePasswordChange');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Değiştiriliyor...';
-        btn.disabled = true;
-
-        try {
-            const response = await this.apiCall('/auth/change-password', 'POST', changePasswordData);
-            
-            if (response.ok) {
-                this.showSuccess('Şifreniz başarıyla değiştirildi. Tekrar giriş yapmanız gerekiyor.');
-                
-                // Hide modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
-                modal.hide();
-                
-                // Logout after 2 seconds
-                setTimeout(() => {
-                    this.logout();
-                }, 2000);
-                
-            } else {
-                const error = await response.json();
-                this.showError(error.message || 'Şifre değiştirme başarısız');
-            }
-        } catch (error) {
-            console.error('Error changing password:', error);
-            this.showError('Şifre değiştirme sırasında hata oluştu');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
 }
 
 // Initialize admin app when DOM is loaded
