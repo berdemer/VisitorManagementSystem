@@ -90,14 +90,14 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 
 7. **Uygulamayı çalıştırın:**
    ```bash
-   dotnet run --urls="http://localhost:5000"
+   dotnet run --launch-profile http
    ```
 
 8. **Uygulamaya erişin:**
-   - Ana sayfa: `http://localhost:5000/`
-   - Ziyaretçi kayıt: `http://localhost:5000/visitor.html`
-   - Giriş sayfası: `http://localhost:5000/login.html`
-   - Admin paneli: `http://localhost:5000/admin.html`
+   - Ana sayfa: `http://localhost:5002/`
+   - Ziyaretçi kayıt: `http://localhost:5002/visitor.html`
+   - Giriş sayfası: `http://localhost:5002/login.html`
+   - Admin paneli: `http://localhost:5002/admin.html`
 
 ## Varsayılan Giriş Bilgileri
 
@@ -253,5 +253,23 @@ Bu proje özel kullanım için geliştirilmiştir.
 ---
 
 **Versiyon**: 2.0  
-**Son Güncelleme**: 2025-07-15  
+**Son Güncelleme**: 2025-07-17  
 **Geliştirici**: Claude Code Assistant
+
+## Sistem Durumu
+
+✅ **Aktif Port**: 5002  
+✅ **Veritabanı**: SQLite - Hazır  
+✅ **Admin Kullanıcı**: Otomatik oluşturuldu  
+✅ **Static Files**: Aktif  
+✅ **JWT Authentication**: Çalışıyor  
+
+### Çalıştırma Komutu
+```bash
+dotnet run --launch-profile http
+```
+
+### Hızlı Erişim
+- **Giriş**: http://localhost:5002/login.html
+- **Ziyaretçi Kaydı**: http://localhost:5002/visitor.html
+- **Admin Panel**: http://localhost:5002/admin.html
