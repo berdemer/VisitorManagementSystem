@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ziyaretçi Kayıt Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-shield-check"></i> Ziyaretçi Sistemi
+                </a>
+                <div class="navbar-nav ms-auto position-relative">
+                    <a class="nav-link" href="login.html">
+                        <i class="bi bi-person"></i> Giriş
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white border-bottom">
+            <ul class="nav nav-tabs border-0" role="tablist">
+                <li class="nav-item flex-fill" role="presentation">
+                    <button class="nav-link active w-100" id="entry-tab" data-bs-toggle="tab" data-bs-target="#entry" type="button" role="tab">
+                        <i class="bi bi-person-plus me-1"></i>
+                        Ziyaretçi Kaydı
+                    </button>
+                </li>
+                <li class="nav-item flex-fill" role="presentation">
+                    <button class="nav-link w-100" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab">
+                        <i class="bi bi-people me-1"></i>
+                        Aktif Ziyaretçiler
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Entry Tab -->
+            <div class="tab-pane fade show active" id="entry" role="tabpanel">
+                <div class="container-fluid p-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-person-plus"></i> Ziyaretçi Kaydı
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                        <form id="visitorForm">
+                            <!-- Ana Blok, Alt Blok, Daire No -->
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label for="blockSelect" class="form-label">Ana Blok *</label>
+                                    <select class="form-select" id="blockSelect" required>
+                                        <option value="">Seçin</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label for="subBlockSelect" class="form-label">Alt Blok *</label>
+                                    <select class="form-select" id="subBlockSelect" required>
+                                        <option value="">Seçin</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label for="apartmentNumber" class="form-label">Daire No *</label>
+                                    <input type="text" class="form-control" id="apartmentNumber" required>
+                                </div>
+                            </div>
+
+                            <!-- Daire Sahibi -->
+                            <div class="mb-3">
+                                <label for="residentName" class="form-label">Daire Sahibi Adı Soyadı *</label>
+                                <input type="text" class="form-control" id="residentName" required>
+                            </div>
+
+                            <!-- Daire Sahibi Telefon -->
+                            <div class="mb-3">
+                                <label for="residentPhone" class="form-label">Daire Sahibi Telefon Numarası *</label>
+                                <input type="tel" class="form-control" id="residentPhone" placeholder="05XX XXX XX XX" required>
+                            </div>
+
+                            <!-- Ziyaretçi Adı Soyadı -->
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Ziyaretçi Adı Soyadı *</label>
+                                <input type="text" class="form-control" id="fullName" required>
+                            </div>
+
+                            <!-- Ziyaretçi Telefon -->
+                            <div class="mb-3">
+                                <label for="visitorPhone" class="form-label">Ziyaretçi Telefon Numarası</label>
+                                <input type="tel" class="form-control" id="visitorPhone" placeholder="05XX XXX XX XX">
+                            </div>
+
+                            <!-- Araç Plakası -->
+                            <div class="mb-3">
+                                <label for="licensePlate" class="form-label">Araç Plakası</label>
+                                <input type="text" class="form-control" id="licensePlate" placeholder="34 ABC 123" style="text-transform: uppercase;">
+                            </div>
+
+                            <!-- Ziyaret Nedeni -->
+                            <div class="mb-3">
+                                <label for="visitReason" class="form-label">Ziyaret Nedeni</label>
+                                <select class="form-select" id="visitReason">
+                                    <option value="">Ziyaret Nedeni Seçin</option>
+                                    <option value="Misafir">Misafir</option>
+                                    <option value="Teslimat">Teslimat</option>
+                                    <option value="Tamir/Bakım">Tamir/Bakım</option>
+                                    <option value="Hizmet">Hizmet Sağlayıcı</option>
+                                    <option value="Kurye">Kurye</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Photo Capture -->
+                            <div class="mb-3">
+                                <label class="form-label">Fotoğraf</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="button" class="btn btn-outline-primary w-100 mb-2" id="captureBtn">
+                                            <i class="bi bi-camera"></i> Fotoğraf Çek
+                                        </button>
+                                        <input type="file" class="form-control" id="photoFile" accept="image/*" capture="camera">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="photoPreview" class="text-center">
+                                            <img id="previewImage" class="img-thumbnail d-none" style="max-height: 150px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle"></i> Ziyaretçi Kaydı Yap
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Visitors Tab -->
+        <div class="tab-pane fade" id="active" role="tabpanel">
+            <div class="container-fluid p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-dark fw-bold">
+                        <i class="bi bi-people me-2"></i>
+                        Aktif Ziyaretçiler
+                    </h5>
+                    <button class="btn btn-outline-primary btn-sm" id="refreshBtn">
+                        <i class="bi bi-arrow-clockwise"></i> Yenile
+                    </button>
+                </div>
+                <div id="activeVisitors">
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-people fs-1"></i>
+                        <p>Aktif ziyaretçi bulunmuyor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successToastBody"></div>
+        </div>
+        
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Hata</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorToastBody"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

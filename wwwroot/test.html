@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sayfası</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>API Bağlantı Testi</h3>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary" onclick="testConnection()">Bağlantı Testi</button>
+                        <button class="btn btn-success" onclick="testLogin()">Login Testi</button>
+                        <hr>
+                        <div id="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testConnection() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="alert alert-info">Test ediliyor...</div>';
+            
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'test',
+                    password: 'test'
+                })
+            })
+            .then(response => {
+                result.innerHTML = `<div class="alert alert-success">
+                    API erişilebilir! Status: ${response.status}
+                </div>`;
+                return response.json();
+            })
+            .then(data => {
+                result.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                result.innerHTML = `<div class="alert alert-danger">
+                    Bağlantı hatası: ${error.message}
+                </div>`;
+            });
+        }
+
+        function testLogin() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="alert alert-info">Login test ediliyor...</div>';
+            
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'admin',
+                    password: 'admin123'
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    result.innerHTML = `<div class="alert alert-success">
+                        Login başarılı! Status: ${response.status}
+                    </div>`;
+                } else {
+                    result.innerHTML = `<div class="alert alert-warning">
+                        Login başarısız! Status: ${response.status}
+                    </div>`;
+                }
+                return response.json();
+            })
+            .then(data => {
+                result.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                result.innerHTML = `<div class="alert alert-danger">
+                    Login hatası: ${error.message}
+                </div>`;
+            });
+        }
+    </script>
+</body>
+</html>

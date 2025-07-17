@@ -1,0 +1,702 @@
+Using launch settings from /Volumes/Harici/testClaude/VisitorManagementSystem/Properties/launchSettings.json...
+Building...
+/Volumes/Harici/testClaude/VisitorManagementSystem/Program.cs(40,80): warning CS8604: Possible null reference argument for parameter 's' in 'byte[] Encoding.GetBytes(string s)'. [/Volumes/Harici/testClaude/VisitorManagementSystem/VisitorManagementSystem.csproj]
+/Volumes/Harici/testClaude/VisitorManagementSystem/Services/UserService.cs(39,47): warning CS8604: Possible null reference argument for parameter 's' in 'byte[] Encoding.GetBytes(string s)'. [/Volumes/Harici/testClaude/VisitorManagementSystem/VisitorManagementSystem.csproj]
+/Volumes/Harici/testClaude/VisitorManagementSystem/Services/UserService.cs(36,35): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [/Volumes/Harici/testClaude/VisitorManagementSystem/VisitorManagementSystem.csproj]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NOT NULL;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT EXISTS (
+          SELECT 1
+          FROM "Users" AS "u"
+          WHERE "u"."Username" = 'admin')
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Volumes/Harici/testClaude/VisitorManagementSystem
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__username_0='?' (Size = 5)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__username_0='?' (Size = 5)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."IsActive"
+      ORDER BY "u"."FullName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?' (Size = 12), @p2='?' (DbType = Boolean), @p3='?' (DbType = DateTime), @p4='?' (Size = 60), @p5='?' (Size = 8), @p6='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Users" ("CreatedAt", "FullName", "IsActive", "LastLogin", "PasswordHash", "Role", "Username")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."IsActive"
+      ORDER BY "u"."FullName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 4), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?' (Size = 6), @p5='?' (Size = 6), @p6='?', @p7='?' (DbType = Boolean), @p8='?' (Size = 12), @p9='?' (Size = 39), @p10='?', @p11='?' (DbType = Int32), @p12='?' (Size = 5), @p13='?' (Size = 10), @p14='?' (Size = 11)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Visitors" ("ApartmentNumber", "CheckInTime", "CheckOutTime", "CreatedAt", "CreatedBy", "FullName", "IdNumber", "IsActive", "LicensePlate", "Notes", "PhotoPath", "ResidentId", "ResidentName", "ResidentPhone", "VisitorPhone")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 7), @p1='?' (Size = 43), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+warn: VisitorManagementSystem.Services.SmsService[0]
+      SMS API credentials not configured. SMS not sent to 5057073802
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."Id" = @__p_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p15='?' (DbType = Int32), @p0='?' (Size = 4), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?' (Size = 6), @p5='?' (Size = 6), @p6='?', @p7='?' (DbType = Boolean), @p8='?' (Size = 12), @p9='?' (Size = 39), @p10='?' (Size = 46), @p11='?' (DbType = Int32), @p12='?' (Size = 5), @p13='?' (Size = 10), @p14='?' (Size = 11)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Visitors" SET "ApartmentNumber" = @p0, "CheckInTime" = @p1, "CheckOutTime" = @p2, "CreatedAt" = @p3, "CreatedBy" = @p4, "FullName" = @p5, "IdNumber" = @p6, "IsActive" = @p7, "LicensePlate" = @p8, "Notes" = @p9, "PhotoPath" = @p10, "ResidentId" = @p11, "ResidentName" = @p12, "ResidentPhone" = @p13, "VisitorPhone" = @p14
+      WHERE "Id" = @p15
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__username_0='?' (Size = 5)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."IsActive"
+      ORDER BY "u"."FullName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__username_0='?' (Size = 5)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."IsActive"
+      ORDER BY "u"."FullName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='?' (Size = 5), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?' (Size = 6), @p5='?' (Size = 12), @p6='?', @p7='?' (DbType = Boolean), @p8='?' (Size = 8), @p9='?' (Size = 46), @p10='?', @p11='?' (DbType = Int32), @p12='?' (Size = 11), @p13='?' (Size = 11), @p14='?' (Size = 11)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Visitors" ("ApartmentNumber", "CheckInTime", "CheckOutTime", "CreatedAt", "CreatedBy", "FullName", "IdNumber", "IsActive", "LicensePlate", "Notes", "PhotoPath", "ResidentId", "ResidentName", "ResidentPhone", "VisitorPhone")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 7), @p1='?' (Size = 50), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+warn: VisitorManagementSystem.Services.SmsService[0]
+      SMS API credentials not configured. SMS not sent to 05057073802
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 5), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?' (Size = 6), @p5='?' (Size = 6), @p6='?', @p7='?' (DbType = Boolean), @p8='?' (Size = 11), @p9='?' (Size = 51), @p10='?', @p11='?' (DbType = Int32), @p12='?' (Size = 16), @p13='?' (Size = 8), @p14='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Visitors" ("ApartmentNumber", "CheckInTime", "CheckOutTime", "CreatedAt", "CreatedBy", "FullName", "IdNumber", "IsActive", "LicensePlate", "Notes", "PhotoPath", "ResidentId", "ResidentName", "ResidentPhone", "VisitorPhone")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 7), @p1='?' (Size = 44), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+warn: VisitorManagementSystem.Services.SmsService[0]
+      SMS API credentials not configured. SMS not sent to 87987987
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."Id" = @__p_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p15='?' (DbType = Int32), @p0='?' (Size = 5), @p1='?' (DbType = DateTime), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?' (Size = 6), @p5='?' (Size = 6), @p6='?', @p7='?' (DbType = Boolean), @p8='?' (Size = 11), @p9='?' (Size = 51), @p10='?' (Size = 45), @p11='?' (DbType = Int32), @p12='?' (Size = 16), @p13='?' (Size = 8), @p14='?' (Size = 10)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Visitors" SET "ApartmentNumber" = @p0, "CheckInTime" = @p1, "CheckOutTime" = @p2, "CreatedAt" = @p3, "CreatedBy" = @p4, "FullName" = @p5, "IdNumber" = @p6, "IsActive" = @p7, "LicensePlate" = @p8, "Notes" = @p9, "PhotoPath" = @p10, "ResidentId" = @p11, "ResidentName" = @p12, "ResidentPhone" = @p13, "VisitorPhone" = @p14
+      WHERE "Id" = @p15
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."Id" = @__p_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 8), @p1='?' (Size = 46), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (DbType = DateTime), @p1='?' (DbType = Boolean)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Visitors" SET "CheckOutTime" = @p0, "IsActive" = @p1
+      WHERE "Id" = @p2
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."Id" = @__p_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 8), @p1='?' (Size = 53), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (DbType = DateTime), @p1='?' (DbType = Boolean)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Visitors" SET "CheckOutTime" = @p0, "IsActive" = @p1
+      WHERE "Id" = @p2
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."Id" = @__p_0
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p0='?' (Size = 8), @p1='?' (Size = 47), @p2='?' (Size = 6), @p3='?' (DbType = DateTime), @p4='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "VisitorLogs" ("Action", "Details", "PerformedBy", "Timestamp", "VisitorId")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "Id";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (DbType = DateTime), @p1='?' (DbType = Boolean)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Visitors" SET "CheckOutTime" = @p0, "IsActive" = @p1
+      WHERE "Id" = @p2
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@__username_0='?' (Size = 5)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."IsActive"
+      ORDER BY "u"."FullName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@__startDate_0='?' (DbType = DateTime), @__endDate_1='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."CheckInTime" >= @__startDate_0 AND "v"."CheckInTime" <= @__endDate_1
+      ORDER BY "v"."CheckInTime" DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@__username_0='?' (Size = 6)], CommandType='Text', CommandTimeout='30']
+      SELECT "u"."Id", "u"."CreatedAt", "u"."FullName", "u"."IsActive", "u"."LastLogin", "u"."PasswordHash", "u"."Role", "u"."Username"
+      FROM "Users" AS "u"
+      WHERE "u"."Username" = @__username_0 AND "u"."IsActive"
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='Text', CommandTimeout='30']
+      UPDATE "Users" SET "LastLogin" = @p0
+      WHERE "Id" = @p1
+      RETURNING 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "v"."Id", "v"."ApartmentNumber", "v"."CheckInTime", "v"."CheckOutTime", "v"."CreatedAt", "v"."CreatedBy", "v"."FullName", "v"."IdNumber", "v"."IsActive", "v"."LicensePlate", "v"."Notes", "v"."PhotoPath", "v"."ResidentId", "v"."ResidentName", "v"."ResidentPhone", "v"."VisitorPhone"
+      FROM "Visitors" AS "v"
+      WHERE "v"."IsActive" AND "v"."CheckOutTime" IS NULL
+      ORDER BY "v"."CheckInTime"

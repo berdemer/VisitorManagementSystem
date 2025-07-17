@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetici Paneli - Ziyaretçi Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi bi-shield-check"></i> Ziyaretçi Sistemi - Yönetim
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <span class="navbar-text me-3" id="userInfo"></span>
+                    <a class="nav-link" href="index.html">
+                        <i class="bi bi-house"></i> Ana Sayfa
+                    </a>
+                    <a class="nav-link" href="#" id="logoutBtn">
+                        <i class="bi bi-box-arrow-right"></i> Çıkış
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="visitors-tab" data-bs-toggle="tab" data-bs-target="#visitors" type="button">
+                    <i class="bi bi-people"></i> Ziyaretçiler
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reports-tab" data-bs-toggle="tab" data-bs-target="#reports" type="button">
+                    <i class="bi bi-graph-up"></i> Raporlar
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="residents-tab" data-bs-toggle="tab" data-bs-target="#residents" type="button">
+                    <i class="bi bi-building"></i> Daire Sahipleri
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button">
+                    <i class="bi bi-person-gear"></i> Kullanıcılar
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button">
+                    <i class="bi bi-gear"></i> Ayarlar
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="adminTabsContent">
+            <!-- Visitors Tab -->
+            <div class="tab-pane fade show active" id="visitors" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4><i class="bi bi-people"></i> Ziyaretçi Yönetimi</h4>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="filterDate" class="form-label">Tarih</label>
+                                <input type="date" class="form-control" id="filterDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterApartment" class="form-label">Daire No</label>
+                                <input type="text" class="form-control" id="filterApartment" placeholder="Daire numarası">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterPlate" class="form-label">Plaka ile Ara</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="filterPlate" placeholder="34ABC123" style="text-transform: uppercase;">
+                                    <button class="btn btn-outline-primary" type="button" id="plateSearchBtn">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterStatus" class="form-label">Durum</label>
+                                <select class="form-control" id="filterStatus">
+                                    <option value="">Tümü</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Çıkış Yapılmış</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visitors Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <label for="visitorsPageSize" class="form-label me-2">Sayfa başına:</label>
+                            <select class="form-select d-inline-block w-auto" id="visitorsPageSize">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>
+                        <div id="visitorsInfo" class="text-muted">
+                            <!-- Toplam kayıt bilgisi -->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ad Soyad</th>
+                                        <th>Daire No</th>
+                                        <th>Plaka</th>
+                                        <th>Giriş Saati</th>
+                                        <th>Çıkış Saati</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visitorsTableBody">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Yükleniyor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <nav>
+                            <ul class="pagination justify-content-center mb-0" id="visitorsPagination">
+                                <!-- Pagination buttons will be generated here -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div class="tab-pane fade" id="reports" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4><i class="bi bi-graph-up"></i> Raporlar ve İstatistikler</h4>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6>Bugün</h6>
+                                        <h4 id="todayVisitors">0</h4>
+                                    </div>
+                                    <i class="bi bi-calendar-day fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6>Bu Hafta</h6>
+                                        <h4 id="weekVisitors">0</h4>
+                                    </div>
+                                    <i class="bi bi-calendar-week fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6>Bu Ay</h6>
+                                        <h4 id="monthVisitors">0</h4>
+                                    </div>
+                                    <i class="bi bi-calendar-month fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6>Aktif</h6>
+                                        <h4 id="activeVisitors">0</h4>
+                                    </div>
+                                    <i class="bi bi-person-check fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Generation -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Rapor Oluştur</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="reportStartDate" class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="reportStartDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="reportEndDate" class="form-label">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="reportEndDate">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-success w-100" id="generateReport">
+                                    <i class="bi bi-file-earmark-excel"></i> Excel Raporu İndir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Most Visited Apartments -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>En Çok Ziyaret Alan Daireler</h5>
+                        <button class="btn btn-outline-primary btn-sm" id="refreshApartmentStats">
+                            <i class="bi bi-arrow-clockwise"></i> Yenile
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="statsStartDate" class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="statsStartDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="statsEndDate" class="form-label">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="statsEndDate">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" id="updateApartmentStats">
+                                    <i class="bi bi-search"></i> Filtrele
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sıra</th>
+                                        <th>Daire No</th>
+                                        <th>Toplam Ziyaretçi</th>
+                                        <th>Aktif Ziyaretçi</th>
+                                        <th>Son Ziyaret</th>
+                                        <th>En Sık Gelen Ziyaretçi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="apartmentStatsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Yükleniyor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Residents Tab -->
+            <div class="tab-pane fade" id="residents" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4><i class="bi bi-building"></i> Daire Sahipleri Yönetimi</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-success" id="addResidentBtn">
+                            <i class="bi bi-person-plus"></i> Yeni Daire Sahibi
+                        </button>
+                        <button class="btn btn-info" id="importResidentsBtn">
+                            <i class="bi bi-upload"></i> Excel İçe Aktar
+                        </button>
+                        <button class="btn btn-warning" id="exportResidentsBtn">
+                            <i class="bi bi-download"></i> Excel Dışa Aktar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="licensePlateSearch" class="form-label">Plaka ile Ara</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="licensePlateSearch" placeholder="34ABC123" style="text-transform: uppercase;">
+                                    <button class="btn btn-outline-primary" type="button" id="searchByPlateBtn">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="residentSearch" class="form-label">Genel Arama</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="residentSearch" placeholder="Ad, daire, telefon...">
+                                    <button class="btn btn-outline-primary" type="button" id="generalSearchBtn">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="residentSearchBlock" class="form-label">Ana Blok</label>
+                                <select class="form-select" id="residentSearchBlock">
+                                    <option value="">Tümü</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="residentSearchSubBlock" class="form-label">Alt Blok</label>
+                                <select class="form-select" id="residentSearchSubBlock">
+                                    <option value="">Tümü</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="residentSearchApartment" class="form-label">Daire No</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="residentSearchApartment" placeholder="A1-1, D2-2...">
+                                    <button class="btn btn-outline-primary" type="button" id="apartmentSearchBtn">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Residents Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <label for="residentsPageSize" class="form-label me-2">Sayfa başına:</label>
+                            <select class="form-select d-inline-block w-auto" id="residentsPageSize">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                        <div id="residentsInfo" class="text-muted">
+                            <!-- Toplam kayıt bilgisi -->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ad Soyad</th>
+                                        <th>Daire No</th>
+                                        <th>Blok</th>
+                                        <th>İletişim</th>
+                                        <th>Araç Sayısı</th>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="residentsTableBody">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Yükleniyor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <nav>
+                            <ul class="pagination justify-content-center mb-0" id="residentsPagination">
+                                <!-- Pagination buttons will be generated here -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-pane fade" id="users" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4><i class="bi bi-person-gear"></i> Kullanıcı Yönetimi</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-success" id="addUserBtn">
+                            <i class="bi bi-person-plus"></i> Yeni Kullanıcı
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Rol</th>
+                                        <th>Son Giriş</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Yükleniyor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane fade" id="settings" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4><i class="bi bi-gear"></i> Sistem Ayarları</h4>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>SMS Ayarları</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="smsApiKey" class="form-label">API Anahtarı</label>
+                                    <input type="text" class="form-control" id="smsApiKey" placeholder="SMS API anahtarı">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="smsSender" class="form-label">Gönderen Adı</label>
+                                    <input type="text" class="form-control" id="smsSender" placeholder="SMS gönderen adı">
+                                </div>
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Güvenlik Ayarları</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="enablePhotoRequired">
+                                        <label class="form-check-label" for="enablePhotoRequired">
+                                            Fotoğraf zorunlu olsun
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="enableSmsNotifications">
+                                        <label class="form-check-label" for="enableSmsNotifications">
+                                            SMS bildirimleri aktif
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mail Settings Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="bi bi-envelope-gear"></i> Mail Ayarları</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="mailSystemActive" disabled>
+                                    <label class="form-check-label" for="mailSystemActive">
+                                        Mail Sistemi Aktif
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="mailSettingsForm">
+                                    <div class="row">
+                                        <!-- Left Column -->
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="mailSenderName" class="form-label">Gönderen Adı *</label>
+                                                <input type="text" class="form-control" id="mailSenderName" placeholder="Ziyaretçi Yönetim Sistemi" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mailSenderEmail" class="form-label">E-posta Adresi *</label>
+                                                <input type="email" class="form-control" id="mailSenderEmail" placeholder="sistem@example.com" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mailSmtpServer" class="form-label">SMTP Sunucusu *</label>
+                                                <input type="text" class="form-control" id="mailSmtpServer" placeholder="smtp.gmail.com" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mailPort" class="form-label">Port *</label>
+                                                <input type="number" class="form-control" id="mailPort" placeholder="587" min="1" max="65535" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right Column -->
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="mailUsername" class="form-label">Kullanıcı Adı *</label>
+                                                <input type="text" class="form-control" id="mailUsername" placeholder="kullanici@example.com" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mailPassword" class="form-label">Şifre *</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="mailPassword" placeholder="Şifre veya uygulama şifresi" required>
+                                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="form-text">Gmail için uygulama şifresi kullanmanız önerilir.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mailSecurityType" class="form-label">Güvenlik *</label>
+                                                <select class="form-select" id="mailSecurityType" required>
+                                                    <option value="TLS" selected>TLS</option>
+                                                    <option value="SSL">SSL</option>
+                                                    <option value="None">Güvenlik Yok</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-grid gap-2">
+                                                    <button type="button" class="btn btn-outline-primary" id="testConnectionBtn">
+                                                        <i class="bi bi-wifi"></i> Bağlantıyı Test Et
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-info" id="sendTestMailBtn">
+                                                        <i class="bi bi-envelope-check"></i> Test Maili Gönder
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button type="submit" class="btn btn-success me-2">
+                                                <i class="bi bi-check-circle"></i> Kaydet
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" id="loadMailSettingsBtn">
+                                                <i class="bi bi-arrow-clockwise"></i> Yenile
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn btn-warning" id="deactivateMailBtn">
+                                            <i class="bi bi-exclamation-triangle"></i> Devre Dışı Bırak
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resident Modal -->
+    <div class="modal fade" id="residentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="residentModalTitle">Daire Sahibi Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="residentForm">
+                        <input type="hidden" id="residentId">
+                        
+                        <!-- Basic Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="residentFullName" class="form-label">Ad Soyad *</label>
+                                <input type="text" class="form-control" id="residentFullName" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Details -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="residentBlock" class="form-label">Ana Blok *</label>
+                                <select class="form-select" id="residentBlock" required>
+                                    <option value="">Seçin</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="residentSubBlock" class="form-label">Alt Blok *</label>
+                                <select class="form-select" id="residentSubBlock" required>
+                                    <option value="">Seçin</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="residentDoorNumber" class="form-label">Kapı No *</label>
+                                <select class="form-select" id="residentDoorNumber" required>
+                                    <option value="">Seçin</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Otomatik Daire Numarası -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="residentApartmentNumber" class="form-label">Daire No (Otomatik)</label>
+                                <input type="text" class="form-control" id="residentApartmentNumber" readonly style="background-color: #f8f9fa;">
+                            </div>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="residentNotes" class="form-label">Notlar</label>
+                            <textarea class="form-control" id="residentNotes" rows="2" placeholder="Ek bilgiler..."></textarea>
+                        </div>
+                        
+                        <!-- Contacts Section -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label">İletişim Bilgileri</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="addContactBtn">
+                                    <i class="bi bi-plus"></i> İletişim Ekle
+                                </button>
+                            </div>
+                            <div id="contactsContainer"></div>
+                        </div>
+                        
+                        <!-- Vehicles Section -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label">Araç Bilgileri</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="addVehicleBtn">
+                                    <i class="bi bi-plus"></i> Araç Ekle
+                                </button>
+                            </div>
+                            <div id="vehiclesContainer"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="saveResident">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Excel İçe Aktar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Excel Dosyası Seçin</label>
+                        <input type="file" class="form-control" id="importFile" accept=".xlsx,.xls">
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Excel dosyası şu sütunları içermelidir: Ad Soyad, Daire No, Ana Blok, Alt Blok, Kapı No
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="importResidents">İçe Aktar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">Kullanıcı Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="mb-3">
+                            <label for="userUsername" class="form-label">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" id="userUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userFullName" class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" id="userFullName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userRole" class="form-label">Rol</label>
+                            <select class="form-control" id="userRole" required>
+                                <option value="Security">Güvenlik</option>
+                                <option value="Manager">Yönetici</option>
+                                <option value="Admin">Sistem Yöneticisi</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="passwordField">
+                            <label for="userPassword" class="form-label">Şifre</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="saveUser">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successToastBody"></div>
+        </div>
+        
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Hata</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorToastBody"></div>
+        </div>
+    </div>
+
+    <!-- Test Mail Modal -->
+    <div class="modal fade" id="testMailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Test Maili Gönder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="testMailForm">
+                        <div class="mb-3">
+                            <label for="testMailTo" class="form-label">Alıcı E-posta *</label>
+                            <input type="email" class="form-control" id="testMailTo" placeholder="test@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="testMailSubject" class="form-label">Konu</label>
+                            <input type="text" class="form-control" id="testMailSubject" value="Test Mail - Ziyaretçi Yönetim Sistemi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="testMailMessage" class="form-label">Mesaj</label>
+                            <textarea class="form-control" id="testMailMessage" rows="4" placeholder="Bu bir test mesajıdır. Mail ayarlarınız başarıyla çalışıyor.">Bu bir test mesajıdır. Mail ayarlarınız başarıyla çalışıyor.</textarea>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Test maili göndermek için önce mail ayarlarını kaydetmelisiniz.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="sendTestMailConfirm">
+                        <i class="bi bi-send"></i> Gönder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
