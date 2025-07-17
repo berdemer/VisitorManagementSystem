@@ -20,6 +20,9 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - ✅ **Ziyaretçi Yönetimi**: Geçmiş kayıt takibi ve filtreleme
 - ✅ **Raporlama**: Excel/CSV formatında detaylı raporlar
 - ✅ **Kullanıcı Yönetimi**: Rol bazlı yetkilendirme sistemi
+- ✅ **Şifre Yönetimi**: Admin tarafından merkezi şifre değiştirme
+- ✅ **Daire Sahipleri Modülü**: Kapsamlı sakin yönetimi
+- ✅ **Mail Sistemi**: SMTP entegrasyonu ve test maili
 - ✅ **Fotoğraf Görüntüleme**: Ziyaretçi fotoğraflarına erişim
 - ✅ **Audit Log**: Tüm işlemlerin kayıt altına alınması
 
@@ -37,6 +40,7 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **Database**: SQLite (Entity Framework Core)
 - **Authentication**: JWT Bearer Token
 - **SMS API**: Entegrasyon hazır (konfigürasyon gerekli)
+- **Mail System**: SMTP protokolü ile e-posta gönderimi
 - **Platform**: Cross-platform (Windows, Linux, macOS)
 
 ## Kurulum
@@ -88,7 +92,22 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
    }
    ```
 
-7. **Uygulamayı çalıştırın:**
+7. **Mail ayarlarını yapılandırın (isteğe bağlı):**
+   Mail sistemi admin panelinden ayarlanabilir, ancak appsettings.json'da da tanımlanabilir:
+   ```json
+   "MailSettings": {
+     "SenderName": "Ziyaretçi Yönetim Sistemi",
+     "SenderEmail": "sistem@example.com",
+     "SmtpServer": "smtp.gmail.com",
+     "Port": 587,
+     "Username": "kullanici@gmail.com",
+     "Password": "uygulama-sifresi",
+     "SecurityType": "TLS",
+     "IsActive": false
+   }
+   ```
+
+8. **Uygulamayı çalıştırın:**
    ```bash
    dotnet run --launch-profile http
    ```
@@ -135,8 +154,28 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
    - Ziyaretçi listesi ve yönetimi
    - İstatistiksel dashboard
    - Kullanıcı yönetimi (Admin)
+   - Daire sahipleri yönetimi
+   - Mail sistemi ayarları (Admin)
    - Raporlama ve Excel export
    - Filtreleme ve arama
+
+### Şifre Yönetimi
+1. **Admin panelinde** "Kullanıcılar" sekmesine gidin
+2. Değiştirmek istediğiniz kullanıcının yanındaki **düzenle** butonuna tıklayın
+3. "Şifre değiştir" checkbox'ını işaretleyin
+4. Yeni şifreyi girin ve kaydedin
+5. Kullanıcı yeni şifresi ile giriş yapabilir
+
+### Mail Sistemi Ayarları
+1. **Admin panelinde** "Ayarlar" sekmesine gidin
+2. **Mail Ayarları** bölümünde SMTP bilgilerini girin:
+   - Gönderen adı ve e-posta
+   - SMTP sunucusu ve port
+   - Kullanıcı adı ve şifre
+   - Güvenlik türü (TLS/SSL)
+3. **Bağlantıyı test edin**
+4. **Test maili gönderin**
+5. Ayarları kaydedin ve sistemi aktif edin
 
 ## API Endpoints
 
@@ -155,8 +194,27 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 ### Kullanıcı İşlemleri
 - `GET /api/user` - Kullanıcıları listele (ADMIN)
 - `POST /api/user` - Yeni kullanıcı oluştur (ADMIN)
-- `PUT /api/user/{id}` - Kullanıcı güncelle (ADMIN)
+- `PUT /api/user/{id}` - Kullanıcı güncelle/şifre değiştir (ADMIN)
 - `DELETE /api/user/{id}` - Kullanıcı sil (ADMIN)
+
+### Daire Sahipleri İşlemleri
+- `GET /api/resident` - Daire sahiplerini listele (AUTH)
+- `GET /api/resident/{id}` - Daire sahibi detayı (AUTH)
+- `POST /api/resident` - Yeni daire sahibi ekle (ADMIN)
+- `PUT /api/resident/{id}` - Daire sahibi güncelle (ADMIN)
+- `DELETE /api/resident/{id}` - Daire sahibi sil (ADMIN)
+- `POST /api/resident/search` - Daire sahibi arama (AUTH)
+- `GET /api/resident/search/license/{plate}` - Plaka ile arama (AUTH)
+- `POST /api/resident/import` - Excel içe aktarma (ADMIN)
+- `GET /api/resident/export` - Excel dışa aktarma (ADMIN)
+
+### Mail Sistemi İşlemleri
+- `GET /api/mailsettings` - Mail ayarlarını getir (ADMIN)
+- `POST /api/mailsettings` - Mail ayarlarını kaydet (ADMIN)
+- `POST /api/mailsettings/test-connection` - SMTP bağlantı testi (ADMIN)
+- `POST /api/mailsettings/send-test` - Test maili gönder (ADMIN)
+- `POST /api/mailsettings/deactivate` - Mail sistemini devre dışı bırak (ADMIN)
+- `GET /api/mailsettings/presets` - SMTP ön ayarları getir (ADMIN)
 
 ## Veritabanı Şeması
 
@@ -176,8 +234,20 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **Audit**: Id, VisitorId, Action, Timestamp, Details, PerformedBy
 
 ### Residents
-- **Bilgiler**: Id, FullName, ApartmentNumber, PhoneNumber, Email
-- **Durum**: IsActive, CreatedAt
+- **Bilgiler**: Id, FullName, ApartmentNumber, Block, SubBlock, DoorNumber
+- **İletişim**: ResidentContacts (ayrı tablo)
+- **Araçlar**: ResidentVehicles (ayrı tablo)
+- **Durum**: IsActive, CreatedAt, Notes
+
+### ResidentContacts
+- **İletişim**: Id, ResidentId, ContactType, ContactValue, Label, Priority
+
+### ResidentVehicles
+- **Araç**: Id, ResidentId, LicensePlate, Brand, Model, Color, Year, VehicleType
+
+### MailSettings
+- **SMTP**: Id, SenderName, SenderEmail, SmtpServer, Port, Username, Password
+- **Güvenlik**: SecurityType, IsActive, CreatedAt, UpdatedAt
 
 ## Yeni Özellikler (v2.0)
 
@@ -188,6 +258,10 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **Foto Link**: Ziyaretçi fotoğraflarına direkt erişim
 - **Real-time Updates**: Otomatik 30 saniye yenileme
 - **Enhanced Admin Panel**: Daha detaylı ziyaretçi bilgileri
+- **Daire Sahipleri Modülü**: Kapsamlı sakin yönetimi ve araç takibi
+- **Mail Sistemi**: SMTP entegrasyonu, test maili ve ön ayarlar
+- **Merkezi Şifre Yönetimi**: Admin tarafından kullanıcı şifre değiştirme
+- **Rol Bazlı Erişim**: Manager rolü için sekme gizleme
 
 ### 🔧 Teknik İyileştirmeler
 - **SQLite Database**: Hafif ve taşınabilir veritabanı
@@ -205,8 +279,8 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 `wwwroot/css/style.css` dosyasını düzenleyerek görünümü özelleştirebilirsiniz.
 
 ### Rol Bazlı Erişim
-- **Admin**: Tüm işlemler (kullanıcı yönetimi, silme)
-- **Manager**: Raporlama ve ziyaretçi yönetimi
+- **Admin**: Tüm işlemler (kullanıcı yönetimi, şifre değiştirme, mail ayarları, silme)
+- **Manager**: Raporlama, ziyaretçi yönetimi ve daire sahipleri (kullanıcılar ve ayarlar gizli)
 - **Security**: Sadece ziyaretçi kaydı ve görüntüleme
 
 ## Güvenlik Notları
@@ -216,6 +290,7 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
    - HTTPS kullanın
    - Güçlü şifreler kullanın
    - SMS API anahtarlarını güvenli saklayın
+   - Mail şifrelerini (özellikle Gmail uygulama şifreleri) güvenli saklayın
 
 2. **Yedekleme:**
    - `VisitorManagementDB.db` dosyasını düzenli yedekleyin
@@ -252,7 +327,7 @@ Bu proje özel kullanım için geliştirilmiştir.
 
 ---
 
-**Versiyon**: 2.0  
+**Versiyon**: 2.1  
 **Son Güncelleme**: 2025-07-17  
 **Geliştirici**: Claude Code Assistant
 
@@ -263,6 +338,9 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **Admin Kullanıcı**: Otomatik oluşturuldu  
 ✅ **Static Files**: Aktif  
 ✅ **JWT Authentication**: Çalışıyor  
+✅ **Mail Sistemi**: Yapılandırılabilir
+✅ **Daire Sahipleri Modülü**: Aktif
+✅ **Merkezi Şifre Yönetimi**: Aktif
 
 ### Çalıştırma Komutu
 ```bash
