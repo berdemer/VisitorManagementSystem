@@ -21,6 +21,9 @@
                     <a class="nav-link" href="index.html">
                         <i class="bi bi-house"></i> Ana Sayfa
                     </a>
+                    <a class="nav-link" href="#" id="changePasswordBtn">
+                        <i class="bi bi-key"></i> Şifre Değiştir
+                    </a>
                     <a class="nav-link" href="#" id="logoutBtn">
                         <i class="bi bi-box-arrow-right"></i> Çıkış
                     </a>
@@ -847,6 +850,62 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
                     <button type="button" class="btn btn-primary" id="sendTestMailConfirm">
                         <i class="bi bi-send"></i> Gönder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-key"></i> Şifre Değiştir
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Mevcut Şifre *</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="currentPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Yeni Şifre *</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword" required minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Şifre en az 6 karakter olmalıdır.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Yeni Şifre Tekrar *</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" required minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            Şifrenizi değiştirdikten sonra tekrar giriş yapmanız gerekecektir.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="savePasswordChange">
+                        <i class="bi bi-check-circle"></i> Şifreyi Değiştir
                     </button>
                 </div>
             </div>

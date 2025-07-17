@@ -28,6 +28,7 @@ class AdminApp {
 
         this.bindEvents();
         this.loadUserInfo();
+        this.hideTabsBasedOnRole();
         this.loadInitialData();
     }
 
@@ -66,6 +67,33 @@ class AdminApp {
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
+        }
+
+        // Change password button
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => this.showChangePasswordModal());
+        }
+
+        // Password change form
+        const savePasswordChange = document.getElementById('savePasswordChange');
+        if (savePasswordChange) {
+            savePasswordChange.addEventListener('click', () => this.changePassword());
+        }
+
+        // Password visibility toggles
+        const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
+        const toggleNewPassword = document.getElementById('toggleNewPassword');
+        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        
+        if (toggleCurrentPassword) {
+            toggleCurrentPassword.addEventListener('click', () => this.togglePasswordVisibility('currentPassword', 'toggleCurrentPassword'));
+        }
+        if (toggleNewPassword) {
+            toggleNewPassword.addEventListener('click', () => this.togglePasswordVisibility('newPassword', 'toggleNewPassword'));
+        }
+        if (toggleConfirmPassword) {
+            toggleConfirmPassword.addEventListener('click', () => this.togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword'));
         }
 
         // Visitors tab events
@@ -446,6 +474,21 @@ class AdminApp {
         const userInfo = document.getElementById('userInfo');
         if (userInfo && this.user) {
             userInfo.textContent = `${this.user.fullName} (${this.getRoleDisplayName(this.user.role)})`;
+        }
+    }
+
+    hideTabsBasedOnRole() {
+        // Manager rolündeki kullanıcılar için Kullanıcılar ve Ayarlar sekmelerini gizle
+        if (this.user.role === 'Manager') {
+            const usersTab = document.querySelector('#users-tab');
+            const settingsTab = document.querySelector('#settings-tab');
+            
+            if (usersTab) {
+                usersTab.parentElement.style.display = 'none';
+            }
+            if (settingsTab) {
+                settingsTab.parentElement.style.display = 'none';
+            }
         }
     }
 
@@ -1169,7 +1212,7 @@ class AdminApp {
                 await this.loadResidents();
                 break;
             case 'search':
-                await this.searchResidentsAsync(this.lastSearchData);
+                await this.searchResidents();
                 break;
             case 'licensePlate':
                 await this.searchByLicensePlate(this.lastSearchData);
@@ -2133,9 +2176,9 @@ class AdminApp {
         }
     }
 
-    togglePasswordVisibility() {
-        const passwordField = document.getElementById('mailPassword');
-        const toggleBtn = document.getElementById('togglePassword');
+    togglePasswordVisibility(fieldId, buttonId) {
+        const passwordField = document.getElementById(fieldId);
+        const toggleBtn = document.getElementById(buttonId);
         const icon = toggleBtn.querySelector('i');
         
         if (passwordField.type === 'password') {
@@ -2144,6 +2187,95 @@ class AdminApp {
         } else {
             passwordField.type = 'password';
             icon.className = 'bi bi-eye';
+        }
+    }
+
+    // Password change methods
+    showChangePasswordModal() {
+        const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        const form = document.getElementById('changePasswordForm');
+        
+        // Reset form
+        form.reset();
+        
+        // Reset password field types
+        document.getElementById('currentPassword').type = 'password';
+        document.getElementById('newPassword').type = 'password';
+        document.getElementById('confirmPassword').type = 'password';
+        
+        // Reset toggle button icons
+        document.querySelector('#toggleCurrentPassword i').className = 'bi bi-eye';
+        document.querySelector('#toggleNewPassword i').className = 'bi bi-eye';
+        document.querySelector('#toggleConfirmPassword i').className = 'bi bi-eye';
+        
+        modal.show();
+    }
+
+    async changePassword() {
+        const form = document.getElementById('changePasswordForm');
+        
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validate passwords match
+        if (newPassword !== confirmPassword) {
+            this.showError('Yeni şifreler eşleşmiyor');
+            return;
+        }
+
+        // Validate password length
+        if (newPassword.length < 6) {
+            this.showError('Yeni şifre en az 6 karakter olmalıdır');
+            return;
+        }
+
+        // Validate not same as current
+        if (currentPassword === newPassword) {
+            this.showError('Yeni şifre mevcut şifreden farklı olmalıdır');
+            return;
+        }
+
+        const changePasswordData = {
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        };
+
+        const btn = document.getElementById('savePasswordChange');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Değiştiriliyor...';
+        btn.disabled = true;
+
+        try {
+            const response = await this.apiCall('/auth/change-password', 'POST', changePasswordData);
+            
+            if (response.ok) {
+                this.showSuccess('Şifreniz başarıyla değiştirildi. Tekrar giriş yapmanız gerekiyor.');
+                
+                // Hide modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                modal.hide();
+                
+                // Logout after 2 seconds
+                setTimeout(() => {
+                    this.logout();
+                }, 2000);
+                
+            } else {
+                const error = await response.json();
+                this.showError(error.message || 'Şifre değiştirme başarısız');
+            }
+        } catch (error) {
+            console.error('Error changing password:', error);
+            this.showError('Şifre değiştirme sırasında hata oluştu');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     }
 }
