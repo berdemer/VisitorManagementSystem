@@ -575,6 +575,7 @@ class AdminApp {
             <tr>
                 <td>
                     <strong>${this.escapeHtml(visitor.fullName)}</strong>
+                    ${visitor.notes ? `<br><small class="text-info"><i class="bi bi-info-circle"></i> ${this.escapeHtml(visitor.notes)}</small>` : ''}
                     ${visitor.idNumber ? `<br><small class="text-muted">TC: ${this.escapeHtml(visitor.idNumber)}</small>` : ''}
                     ${visitor.residentName ? `<br><small class="text-muted">Daire Sahibi: ${this.escapeHtml(visitor.residentName)}</small>` : ''}
                     ${visitor.visitorPhone ? `<br><small class="text-muted">Ziyaretçi Tel: ${this.escapeHtml(this.formatPhoneDisplay(visitor.visitorPhone))}</small>` : ''}
@@ -863,6 +864,7 @@ class AdminApp {
     async generateReport() {
         const startDate = document.getElementById('reportStartDate')?.value;
         const endDate = document.getElementById('reportEndDate')?.value;
+        const status = document.getElementById('reportStatus')?.value || 'all';
 
         if (!startDate || !endDate) {
             this.showError('Başlangıç ve bitiş tarihleri gerekli');
@@ -870,8 +872,8 @@ class AdminApp {
         }
 
         try {
-            console.log('Generating report for:', startDate, 'to', endDate);
-            const url = `/visitor/export?startDate=${startDate}&endDate=${endDate}`;
+            console.log('Generating report for:', startDate, 'to', endDate, 'status:', status);
+            const url = `/visitor/export?startDate=${startDate}&endDate=${endDate}&status=${status}`;
             console.log('Request URL:', `${this.apiBase}${url}`);
             
             const response = await fetch(`${this.apiBase}${url}`, {
@@ -896,7 +898,8 @@ class AdminApp {
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = downloadUrl;
-                link.download = `ziyaretci_raporu_${startDate}_${endDate}.xlsx`;
+                const statusText = status === 'active' ? '_aktif' : status === 'inactive' ? '_cikis_yapmis' : '';
+                link.download = `ziyaretci_raporu_${startDate}_${endDate}${statusText}.xlsx`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);

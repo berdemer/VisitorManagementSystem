@@ -199,7 +199,8 @@ namespace VisitorManagementSystem.Controllers
         [HttpGet("export")]
         public async Task<ActionResult> ExportToExcel(
             [FromQuery] string startDate,
-            [FromQuery] string endDate)
+            [FromQuery] string endDate,
+            [FromQuery] string? status = "all")
         {
             try
             {
@@ -209,6 +210,18 @@ namespace VisitorManagementSystem.Controllers
                 }
 
                 var visitors = await _visitorService.GetVisitorsByDateRangeAsync(parsedStartDate, parsedEndDate);
+                
+                // Apply status filter
+                if (status == "active")
+                {
+                    visitors = visitors.Where(v => v.IsActive);
+                }
+                else if (status == "inactive")
+                {
+                    visitors = visitors.Where(v => !v.IsActive);
+                }
+                // "all" or null = no filter
+                
                 var excelData = await _visitorService.ExportVisitorsToExcelAsync(visitors, parsedStartDate, parsedEndDate);
                 
                 var fileName = $"ziyaretci_raporu_{parsedStartDate:yyyy-MM-dd}_{parsedEndDate:yyyy-MM-dd}.xlsx";

@@ -62,9 +62,46 @@ namespace VisitorManagementSystem.Services
 
         public async Task<Visitor> UpdateVisitorAsync(Visitor visitor)
         {
-            _context.Entry(visitor).State = EntityState.Modified;
+            var existingVisitor = await _context.Visitors.FindAsync(visitor.Id);
+            if (existingVisitor == null)
+                throw new InvalidOperationException("Visitor not found");
+
+            // Preserve original timestamps and system fields
+            var originalCheckInTime = existingVisitor.CheckInTime;
+            var originalCreatedAt = existingVisitor.CreatedAt;
+            var originalCreatedBy = existingVisitor.CreatedBy;
+            var originalCheckOutTime = existingVisitor.CheckOutTime;
+            var originalIsActive = existingVisitor.IsActive;
+            var originalPhotoPath = existingVisitor.PhotoPath;
+
+            // Update only the editable fields
+            existingVisitor.FullName = visitor.FullName;
+            existingVisitor.ApartmentNumber = visitor.ApartmentNumber;
+            existingVisitor.ResidentName = visitor.ResidentName;
+            existingVisitor.ResidentPhone = visitor.ResidentPhone;
+            existingVisitor.VisitorPhone = visitor.VisitorPhone;
+            existingVisitor.LicensePlate = visitor.LicensePlate;
+            existingVisitor.Notes = visitor.Notes;
+            
+            // Restore preserved fields
+            existingVisitor.CheckInTime = originalCheckInTime;
+            existingVisitor.CreatedAt = originalCreatedAt;
+            existingVisitor.CreatedBy = originalCreatedBy;
+            existingVisitor.CheckOutTime = originalCheckOutTime;
+            existingVisitor.IsActive = originalIsActive;
+            
+            // Update photoPath only if a new one is provided, otherwise preserve existing
+            if (!string.IsNullOrEmpty(visitor.PhotoPath))
+            {
+                existingVisitor.PhotoPath = visitor.PhotoPath;
+            }
+            else
+            {
+                existingVisitor.PhotoPath = originalPhotoPath;
+            }
+
             await _context.SaveChangesAsync();
-            return visitor;
+            return existingVisitor;
         }
 
         public async Task<bool> CheckOutVisitorAsync(int id, string performedBy)
@@ -93,8 +130,17 @@ namespace VisitorManagementSystem.Services
 
         public async Task<IEnumerable<Visitor>> GetVisitorsByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
+            var endDateWithTime = endDate.AddDays(1);
+            
             return await _context.Visitors
-                .Where(v => v.CheckInTime >= startDate && v.CheckInTime < endDate.AddDays(1))
+                .Where(v => 
+                    // Check-in in date range
+                    (v.CheckInTime >= startDate && v.CheckInTime < endDateWithTime) ||
+                    // OR still active (no checkout) - include all active visitors regardless of check-in date
+                    (v.CheckOutTime == null && v.IsActive) ||
+                    // OR checked out in date range
+                    (v.CheckOutTime.HasValue && v.CheckOutTime >= startDate && v.CheckOutTime < endDateWithTime)
+                )
                 .OrderByDescending(v => v.CheckInTime)
                 .ToListAsync();
         }
@@ -144,20 +190,19 @@ namespace VisitorManagementSystem.Services
                 worksheet.Cells[1, 1].Value = "Ad Soyad";
                 worksheet.Cells[1, 2].Value = "Daire No";
                 worksheet.Cells[1, 3].Value = "Telefon";
-                worksheet.Cells[1, 4].Value = "Kimlik No";
-                worksheet.Cells[1, 5].Value = "Plaka";
+                worksheet.Cells[1, 4].Value = "Plaka";
+                worksheet.Cells[1, 5].Value = "Ziyaret Nedeni";
                 worksheet.Cells[1, 6].Value = "Giriş Tarihi";
                 worksheet.Cells[1, 7].Value = "Çıkış Tarihi";
                 worksheet.Cells[1, 8].Value = "Durum";
                 worksheet.Cells[1, 9].Value = "Daire Sahibi";
-                worksheet.Cells[1, 10].Value = "Notlar";
 
                 // Style headers (macOS'ta devre dışı)
                 if (!OperatingSystem.IsMacOS())
                 {
                     try
                     {
-                        using var range = worksheet.Cells[1, 1, 1, 10];
+                        using var range = worksheet.Cells[1, 1, 1, 9];
                         range.Style.Font.Bold = true;
                         range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                     }
@@ -176,13 +221,12 @@ namespace VisitorManagementSystem.Services
                     worksheet.Cells[row, 1].Value = visitor.FullName ?? "";
                     worksheet.Cells[row, 2].Value = visitor.ApartmentNumber ?? "";
                     worksheet.Cells[row, 3].Value = visitor.VisitorPhone ?? "";
-                    worksheet.Cells[row, 4].Value = visitor.IdNumber ?? "";
-                    worksheet.Cells[row, 5].Value = visitor.LicensePlate ?? "";
+                    worksheet.Cells[row, 4].Value = visitor.LicensePlate ?? "";
+                    worksheet.Cells[row, 5].Value = visitor.Notes ?? "";
                     worksheet.Cells[row, 6].Value = visitor.CheckInTime.ToString("dd.MM.yyyy HH:mm");
                     worksheet.Cells[row, 7].Value = visitor.CheckOutTime?.ToString("dd.MM.yyyy HH:mm") ?? "";
                     worksheet.Cells[row, 8].Value = visitor.IsActive ? "Aktif" : "Çıkış Yapılmış";
                     worksheet.Cells[row, 9].Value = visitor.ResidentName ?? "";
-                    worksheet.Cells[row, 10].Value = visitor.Notes ?? "";
                     row++;
                 }
 

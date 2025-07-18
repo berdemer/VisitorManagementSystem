@@ -276,8 +276,7 @@ class VisitorApp {
             residentPhone: residentPhone,
             visitorPhone: visitorPhone || null,
             licensePlate: licensePlate || null,
-            visitReason: visitReason || 'Belirtilmemiş',
-            notes: `Blok: ${blockSelect}${subBlockSelect}, Daire: ${apartmentNumber}, Daire Sahibi: ${residentName}`
+            notes: visitReason || 'Belirtilmemiş'
         };
 
         try {
@@ -348,9 +347,12 @@ class VisitorApp {
             residentPhone: residentPhone,
             visitorPhone: visitorPhone || null,
             licensePlate: licensePlate || null,
-            visitReason: visitReason || 'Belirtilmemiş',
-            notes: `Blok: ${blockSelect}${subBlockSelect}, Daire: ${apartmentNumber}, Daire Sahibi: ${residentName}`
+            notes: visitReason || 'Belirtilmemiş'
         };
+
+        // Add id and preserve photoPath for update
+        visitorData.id = this.currentEditingVisitor.id;
+        visitorData.photoPath = this.currentEditingVisitor.photoPath;
 
         try {
             const response = await this.apiCall(`/visitor/${this.currentEditingVisitor.id}`, 'PUT', visitorData);
@@ -358,9 +360,11 @@ class VisitorApp {
             if (response.ok) {
                 const visitor = await response.json();
                 
-                // Upload captured photo if available
+                // Upload captured photo if available (new photo was taken during edit)
                 if (this.capturedImageData) {
                     await this.uploadCapturedPhoto(visitor.id, this.capturedImageData);
+                    // Clear the captured data after upload
+                    this.capturedImageData = null;
                 }
 
                 // Reset edit mode
@@ -472,7 +476,7 @@ class VisitorApp {
                             ${residentPhone ? `<br><i class="bi bi-telephone"></i> Daire Tel: ${this.escapeHtml(this.formatPhoneDisplay(residentPhone))}` : ''}
                             ${visitorPhone ? `<br><i class="bi bi-phone"></i> Ziyaretçi Tel: ${this.escapeHtml(this.formatPhoneDisplay(visitorPhone))}` : ''}
                             ${visitor.licensePlate ? `<br><i class="bi bi-car-front"></i> Plaka: ${this.escapeHtml(visitor.licensePlate)}` : ''}
-                            ${visitor.visitReason ? `<br><i class="bi bi-info-circle"></i> ${this.escapeHtml(visitor.visitReason)}` : ''}
+                            ${visitor.notes ? `<br><i class="bi bi-info-circle"></i> ${this.escapeHtml(visitor.notes)}` : ''}
                             ${visitor.photoPath ? `<br><a href="${this.escapeHtml(visitor.photoPath)}" target="_blank" class="photo-link"><i class="bi bi-image"></i> Fotoğraf görüntüle</a>` : ''}
                         </div>
                         <div class="text-muted small mt-2">
@@ -1444,7 +1448,7 @@ class VisitorApp {
     async editVisitor(visitorId) {
         try {
             // Fetch visitor data
-            const response = await fetch(`${this.apiBase}/visitor/${visitorId}`);
+            const response = await this.apiCall(`/visitor/${visitorId}`);
             if (!response.ok) {
                 throw new Error('Ziyaretçi bilgileri alınamadı');
             }
@@ -1490,7 +1494,7 @@ class VisitorApp {
         document.getElementById('fullName').value = visitor.fullName;
         document.getElementById('visitorPhone').value = visitor.visitorPhone || '';
         document.getElementById('licensePlate').value = visitor.licensePlate || '';
-        document.getElementById('visitReason').value = visitor.visitReason || '';
+        document.getElementById('visitReason').value = visitor.notes || '';
         
         // Fill resident information
         document.getElementById('residentName').value = visitor.residentName || '';
@@ -1523,14 +1527,13 @@ class VisitorApp {
             submitButton.classList.add('btn-warning');
         }
         
-        // Add cancel button
-        const cancelButton = document.createElement('button');
-        cancelButton.type = 'button';
-        cancelButton.className = 'btn btn-secondary btn-lg ms-2';
-        cancelButton.innerHTML = '<i class="bi bi-x-circle"></i> İptal';
-        cancelButton.onclick = () => this.cancelEdit();
-        
-        if (submitButton && !submitButton.nextElementSibling) {
+        // Add cancel button if not already exists
+        if (submitButton && !document.querySelector('#visitorForm .btn-secondary')) {
+            const cancelButton = document.createElement('button');
+            cancelButton.type = 'button';
+            cancelButton.className = 'btn btn-secondary btn-lg ms-2';
+            cancelButton.innerHTML = '<i class="bi bi-x-circle"></i> İptal';
+            cancelButton.onclick = () => this.cancelEdit();
             submitButton.parentNode.appendChild(cancelButton);
         }
         
@@ -1558,8 +1561,9 @@ class VisitorApp {
         // Reset form UI
         this.resetFormUI();
         
-        // Clear photo preview
+        // Clear photo preview and captured image data
         this.clearPhotoPreview();
+        this.capturedImageData = null;
     }
 
     // Reset form UI to add mode
