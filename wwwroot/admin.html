@@ -255,21 +255,35 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>En Çok Ziyaret Alan Daireler</h5>
-                        <button class="btn btn-outline-primary btn-sm" id="refreshApartmentStats">
-                            <i class="bi bi-arrow-clockwise"></i> Yenile
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" id="exportApartmentStats">
+                                <i class="bi bi-file-earmark-excel"></i> Excel İndir
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" id="refreshApartmentStats">
+                                <i class="bi bi-arrow-clockwise"></i> Yenile
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="statsStartDate" class="form-label">Başlangıç Tarihi</label>
                                 <input type="date" class="form-control" id="statsStartDate">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="statsEndDate" class="form-label">Bitiş Tarihi</label>
                                 <input type="date" class="form-control" id="statsEndDate">
                             </div>
-                            <div class="col-md-4 d-flex align-items-end">
+                            <div class="col-md-3">
+                                <label for="apartmentStatsPageSize" class="form-label">Gösterim Sayısı</label>
+                                <select class="form-select" id="apartmentStatsPageSize">
+                                    <option value="3">3 Daire</option>
+                                    <option value="5" selected>5 Daire</option>
+                                    <option value="10">10 Daire</option>
+                                    <option value="20">20 Daire</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
                                 <button class="btn btn-primary w-100" id="updateApartmentStats">
                                     <i class="bi bi-search"></i> Filtrele
                                 </button>
@@ -294,6 +308,19 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        
+                        <!-- Pagination for Apartment Stats -->
+                        <div class="row align-items-center mt-3">
+                            <div class="col-md-6">
+                                <small class="text-muted" id="apartmentStatsInfo">0 kayıt gösteriliyor</small>
+                            </div>
+                            <div class="col-md-6">
+                                <nav>
+                                    <ul class="pagination pagination-sm justify-content-end mb-0" id="apartmentStatsPagination">
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 </div>

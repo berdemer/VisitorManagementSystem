@@ -16,6 +16,11 @@ class AdminApp {
         this.visitorTotalRecords = 0;
         this.visitorCurrentSearchMode = 'all';
         this.visitorLastSearchData = null;
+        
+        // Apartment stats pagination
+        this.apartmentStatsCurrentPage = 1;
+        this.apartmentStatsPageSize = 5;
+        this.apartmentStatsTotalRecords = 0;
         this.init();
     }
 
@@ -153,6 +158,20 @@ class AdminApp {
         const updateApartmentStats = document.getElementById('updateApartmentStats');
         if (updateApartmentStats) {
             updateApartmentStats.addEventListener('click', () => this.loadApartmentStats());
+        }
+
+        const exportApartmentStats = document.getElementById('exportApartmentStats');
+        if (exportApartmentStats) {
+            exportApartmentStats.addEventListener('click', () => this.exportApartmentStats());
+        }
+
+        const apartmentStatsPageSize = document.getElementById('apartmentStatsPageSize');
+        if (apartmentStatsPageSize) {
+            apartmentStatsPageSize.addEventListener('change', () => {
+                this.apartmentStatsPageSize = parseInt(apartmentStatsPageSize.value);
+                this.apartmentStatsCurrentPage = 1;
+                this.loadApartmentStats();
+            });
         }
 
         // Residents tab events (Admin only)
@@ -923,8 +942,15 @@ class AdminApp {
             const endDate = document.getElementById('statsEndDate')?.value;
             
             let url = '/visitor/apartment-stats';
-            if (startDate && endDate) {
-                url += `?startDate=${startDate}&endDate=${endDate}`;
+            const params = new URLSearchParams();
+            
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            params.append('page', this.apartmentStatsCurrentPage);
+            params.append('pageSize', this.apartmentStatsPageSize);
+            
+            if (params.toString()) {
+                url += `?${params.toString()}`;
             }
             
             console.log('Loading apartment stats with URL:', url);
@@ -933,9 +959,12 @@ class AdminApp {
             console.log('Apartment stats response status:', response.status);
             
             if (response.ok) {
-                const stats = await response.json();
-                console.log('Apartment stats data:', stats);
-                this.displayApartmentStats(stats);
+                const pagedData = await response.json();
+                console.log('Apartment stats data:', pagedData);
+                this.apartmentStatsTotalRecords = pagedData.totalCount;
+                this.displayApartmentStats(pagedData.apartmentStats);
+                this.displayApartmentStatsPagination(pagedData);
+                this.displayApartmentStatsInfo(pagedData);
             } else {
                 const errorText = await response.text();
                 console.error('Apartment stats failed:', errorText);
@@ -956,28 +985,144 @@ class AdminApp {
             return;
         }
 
-        tbody.innerHTML = stats.map((stat, index) => `
-            <tr>
-                <td>
-                    <span class="badge bg-primary">${index + 1}</span>
-                </td>
-                <td>
-                    <strong>${this.escapeHtml(stat.apartmentNumber)}</strong>
-                </td>
-                <td>
-                    <span class="badge bg-info">${stat.visitorCount}</span>
-                </td>
-                <td>
-                    <span class="badge bg-success">${stat.activeVisitorCount}</span>
-                </td>
-                <td>
-                    <small>${this.formatDateTime(stat.lastVisitDate)}</small>
-                </td>
-                <td>
-                    <small>${this.escapeHtml(stat.mostFrequentVisitor)}</small>
-                </td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = stats.map((stat, index) => {
+            const rank = (this.apartmentStatsCurrentPage - 1) * this.apartmentStatsPageSize + index + 1;
+            return `
+                <tr>
+                    <td>
+                        <span class="badge bg-primary">${rank}</span>
+                    </td>
+                    <td>
+                        <strong>${this.escapeHtml(stat.apartmentNumber)}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">${stat.visitorCount}</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-success">${stat.activeVisitorCount}</span>
+                    </td>
+                    <td>
+                        <small>${this.formatDateTime(stat.lastVisitDate)}</small>
+                    </td>
+                    <td>
+                        <small>${this.escapeHtml(stat.mostFrequentVisitor)}</small>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    displayApartmentStatsPagination(pagedData) {
+        const paginationContainer = document.getElementById('apartmentStatsPagination');
+        if (!paginationContainer) return;
+
+        const { pageNumber, totalPages, hasPreviousPage, hasNextPage } = pagedData;
+        
+        let paginationHtml = '';
+
+        // Previous button
+        if (hasPreviousPage) {
+            paginationHtml += `<li class="page-item">
+                <a class="page-link" href="#" onclick="admin.goToApartmentStatsPage(${pageNumber - 1}); return false;">Önceki</a>
+            </li>`;
+        } else {
+            paginationHtml += `<li class="page-item disabled">
+                <a class="page-link" href="#">Önceki</a>
+            </li>`;
+        }
+
+        // Page numbers
+        const startPage = Math.max(1, pageNumber - 2);
+        const endPage = Math.min(totalPages, pageNumber + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === pageNumber) {
+                paginationHtml += `<li class="page-item active">
+                    <a class="page-link" href="#">${i}</a>
+                </li>`;
+            } else {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="admin.goToApartmentStatsPage(${i}); return false;">${i}</a>
+                </li>`;
+            }
+        }
+
+        // Next button
+        if (hasNextPage) {
+            paginationHtml += `<li class="page-item">
+                <a class="page-link" href="#" onclick="admin.goToApartmentStatsPage(${pageNumber + 1}); return false;">Sonraki</a>
+            </li>`;
+        } else {
+            paginationHtml += `<li class="page-item disabled">
+                <a class="page-link" href="#">Sonraki</a>
+            </li>`;
+        }
+
+        paginationContainer.innerHTML = paginationHtml;
+    }
+
+    displayApartmentStatsInfo(pagedData) {
+        const infoContainer = document.getElementById('apartmentStatsInfo');
+        if (!infoContainer) return;
+
+        const { pageNumber, pageSize, totalCount } = pagedData;
+        const startRecord = (pageNumber - 1) * pageSize + 1;
+        const endRecord = Math.min(pageNumber * pageSize, totalCount);
+
+        infoContainer.innerHTML = `${startRecord}-${endRecord} / ${totalCount} daire`;
+    }
+
+    goToApartmentStatsPage(page) {
+        this.apartmentStatsCurrentPage = page;
+        this.loadApartmentStats();
+    }
+
+    async exportApartmentStats() {
+        try {
+            const startDate = document.getElementById('statsStartDate')?.value;
+            const endDate = document.getElementById('statsEndDate')?.value;
+            
+            let url = '/visitor/apartment-stats/export';
+            const params = new URLSearchParams();
+            
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+            
+            const response = await fetch(`${this.apiBase}${url}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                }
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                
+                const dateText = startDate && endDate ? `${startDate}_${endDate}` : 'tum-zamanlar';
+                link.download = `daire_istatistikleri_${dateText}.xlsx`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                this.showSuccess('Daire istatistikleri Excel raporu indirildi');
+            } else {
+                const errorText = await response.text();
+                console.error('Apartment stats export failed:', errorText);
+                this.showError(`Excel raporu oluşturulamadı: ${errorText}`);
+            }
+        } catch (error) {
+            console.error('Export apartment stats error:', error);
+            this.showError('Excel raporu oluşturma sırasında hata oluştu');
+        }
     }
 
     async loadUsers() {

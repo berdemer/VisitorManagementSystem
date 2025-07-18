@@ -237,6 +237,38 @@ namespace VisitorManagementSystem.Controllers
         [HttpGet("apartment-stats")]
         public async Task<ActionResult> GetMostVisitedApartments(
             [FromQuery] string? startDate,
+            [FromQuery] string? endDate,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5)
+        {
+            try
+            {
+                DateTime? parsedStartDate = null;
+                DateTime? parsedEndDate = null;
+
+                if (!string.IsNullOrEmpty(startDate) && DateTime.TryParse(startDate, out var tempStartDate))
+                {
+                    parsedStartDate = tempStartDate;
+                }
+
+                if (!string.IsNullOrEmpty(endDate) && DateTime.TryParse(endDate, out var tempEndDate))
+                {
+                    parsedEndDate = tempEndDate;
+                }
+
+                var stats = await _visitorService.GetMostVisitedApartmentsPagedAsync(parsedStartDate, parsedEndDate, page, pageSize);
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting apartment statistics");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("apartment-stats/export")]
+        public async Task<ActionResult> ExportApartmentStatsToExcel(
+            [FromQuery] string? startDate,
             [FromQuery] string? endDate)
         {
             try
@@ -254,12 +286,17 @@ namespace VisitorManagementSystem.Controllers
                     parsedEndDate = tempEndDate;
                 }
 
-                var stats = await _visitorService.GetMostVisitedApartmentsAsync(parsedStartDate, parsedEndDate);
-                return Ok(stats);
+                var excelData = await _visitorService.ExportApartmentStatsToExcelAsync(parsedStartDate, parsedEndDate);
+                
+                var fileStartDate = parsedStartDate?.ToString("yyyy-MM-dd") ?? "tum-zamanlar";
+                var fileEndDate = parsedEndDate?.ToString("yyyy-MM-dd") ?? "tum-zamanlar";
+                var fileName = $"daire_istatistikleri_{fileStartDate}_{fileEndDate}.xlsx";
+                
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting apartment statistics");
+                _logger.LogError(ex, "Error exporting apartment stats to Excel");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

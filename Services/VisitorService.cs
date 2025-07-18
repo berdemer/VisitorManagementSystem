@@ -506,6 +506,113 @@ namespace VisitorManagementSystem.Services
                 .ToListAsync();
         }
 
+        public async Task<PagedApartmentStatsDto> GetMostVisitedApartmentsPagedAsync(DateTime? startDate, DateTime? endDate, int page = 1, int pageSize = 5)
+        {
+            try
+            {
+                var query = _context.Visitors.AsQueryable();
+
+                if (startDate.HasValue)
+                    query = query.Where(v => v.CheckInTime >= startDate.Value);
+
+                if (endDate.HasValue)
+                    query = query.Where(v => v.CheckInTime < endDate.Value.AddDays(1));
+
+                var groupedQuery = query
+                    .GroupBy(v => v.ApartmentNumber)
+                    .Select(g => new ApartmentVisitStatDto
+                    {
+                        ApartmentNumber = g.Key,
+                        VisitorCount = g.Count(),
+                        ActiveVisitorCount = g.Count(v => v.IsActive),
+                        LastVisitDate = g.Max(v => v.CheckInTime),
+                        MostFrequentVisitor = g.GroupBy(v => v.FullName)
+                            .OrderByDescending(vg => vg.Count())
+                            .Select(vg => vg.Key)
+                            .FirstOrDefault() ?? ""
+                    })
+                    .OrderByDescending(s => s.VisitorCount);
+
+                var totalCount = await groupedQuery.CountAsync();
+
+                var stats = await groupedQuery
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PagedApartmentStatsDto
+                {
+                    ApartmentStats = stats,
+                    TotalCount = totalCount,
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                    HasPreviousPage = page > 1,
+                    HasNextPage = page < (int)Math.Ceiling((double)totalCount / pageSize)
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetMostVisitedApartmentsPagedAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<byte[]> ExportApartmentStatsToExcelAsync(DateTime? startDate, DateTime? endDate)
+        {
+            try
+            {
+                // Get all apartment stats without pagination
+                var stats = await GetMostVisitedApartmentsAsync(startDate, endDate);
+
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                
+                using var package = new ExcelPackage();
+                var worksheet = package.Workbook.Worksheets.Add("Daire İstatistikleri");
+
+                // Headers
+                worksheet.Cells[1, 1].Value = "Sıra";
+                worksheet.Cells[1, 2].Value = "Daire No";
+                worksheet.Cells[1, 3].Value = "Toplam Ziyaretçi";
+                worksheet.Cells[1, 4].Value = "Aktif Ziyaretçi";
+                worksheet.Cells[1, 5].Value = "Son Ziyaret Tarihi";
+                worksheet.Cells[1, 6].Value = "En Sık Gelen Ziyaretçi";
+
+                // Data
+                int row = 2;
+                int rank = 1;
+                
+                foreach (var stat in stats)
+                {
+                    worksheet.Cells[row, 1].Value = rank;
+                    worksheet.Cells[row, 2].Value = stat.ApartmentNumber;
+                    worksheet.Cells[row, 3].Value = stat.VisitorCount;
+                    worksheet.Cells[row, 4].Value = stat.ActiveVisitorCount;
+                    worksheet.Cells[row, 5].Value = stat.LastVisitDate.ToString("dd.MM.yyyy HH:mm");
+                    worksheet.Cells[row, 6].Value = stat.MostFrequentVisitor;
+                    row++;
+                    rank++;
+                }
+
+                // Add summary
+                worksheet.Cells[row + 1, 1].Value = "Rapor Özeti";
+                worksheet.Cells[row + 2, 1].Value = startDate.HasValue && endDate.HasValue 
+                    ? $"Tarih Aralığı: {startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}"
+                    : "Tüm Zamanlar";
+                worksheet.Cells[row + 3, 1].Value = $"Toplam Daire Sayısı: {stats.Count()}";
+                worksheet.Cells[row + 4, 1].Value = $"Toplam Ziyaret: {stats.Sum(s => s.VisitorCount)}";
+                worksheet.Cells[row + 5, 1].Value = $"Toplam Aktif Ziyaretçi: {stats.Sum(s => s.ActiveVisitorCount)}";
+                worksheet.Cells[row + 6, 1].Value = $"Rapor Tarihi: {DateTime.Now:dd.MM.yyyy HH:mm}";
+
+                return package.GetAsByteArray();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Excel export error: {ex.Message}");
+                throw;
+            }
+        }
+
         private static string NormalizeTurkishChars(string input)
         {
             if (string.IsNullOrEmpty(input))
