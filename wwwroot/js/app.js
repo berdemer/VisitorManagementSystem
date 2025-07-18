@@ -146,10 +146,28 @@ class VisitorApp {
         const captureBtn = document.getElementById('captureBtn');
         if (captureBtn) {
             captureBtn.addEventListener('click', () => {
-                const photoFile = document.getElementById('photoFile');
-                if (photoFile) {
-                    photoFile.click();
-                }
+                this.openCameraModal();
+            });
+        }
+
+        // Camera modal events
+        const takePictureBtn = document.getElementById('takePictureBtn');
+        if (takePictureBtn) {
+            takePictureBtn.addEventListener('click', () => {
+                this.takePicture();
+            });
+        }
+
+        const closeCameraModal = document.getElementById('closeCameraModal');
+        const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+        if (closeCameraModal) {
+            closeCameraModal.addEventListener('click', () => {
+                this.closeCameraModal();
+            });
+        }
+        if (cancelCameraBtn) {
+            cancelCameraBtn.addEventListener('click', () => {
+                this.closeCameraModal();
             });
         }
 
@@ -267,10 +285,12 @@ class VisitorApp {
             if (response.ok) {
                 const visitor = await response.json();
                 
-                // Upload photo if selected
+                // Upload photo if selected or captured
                 const photoFile = document.getElementById('photoFile');
                 if (photoFile && photoFile.files[0]) {
                     await this.uploadPhoto(visitor.id, photoFile.files[0]);
+                } else if (this.capturedImageData) {
+                    await this.uploadCapturedPhoto(visitor.id, this.capturedImageData);
                 }
 
                 this.resetForm();
@@ -305,6 +325,32 @@ class VisitorApp {
             }
         } catch (error) {
             console.error('Photo upload error:', error);
+        }
+    }
+
+    async uploadCapturedPhoto(visitorId, imageData) {
+        try {
+            // Convert base64 to blob
+            const response = await fetch(imageData);
+            const blob = await response.blob();
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('photo', blob, 'captured_photo.jpg');
+
+            const uploadResponse = await fetch(`${this.apiBase}/visitor/upload-photo?visitorId=${visitorId}`, {
+                method: 'POST',
+                headers: this.token ? {
+                    'Authorization': `Bearer ${this.token}`
+                } : {},
+                body: formData
+            });
+
+            if (!uploadResponse.ok) {
+                console.warn('Captured photo upload failed');
+            }
+        } catch (error) {
+            console.error('Captured photo upload error:', error);
         }
     }
 
@@ -456,6 +502,25 @@ class VisitorApp {
         if (previewImage) {
             previewImage.classList.add('d-none');
             previewImage.src = '';
+        }
+
+        // Clear captured image data
+        this.capturedImageData = null;
+
+        // Clear suggestions
+        this.hideResidentSuggestions();
+        this.hideVisitorSuggestions();
+        
+        // Reset call button
+        const callBtn = document.getElementById('callBtn');
+        if (callBtn) {
+            callBtn.disabled = true;
+        }
+
+        // Hide SMS code display
+        const smsCodeDisplay = document.getElementById('smsCodeDisplay');
+        if (smsCodeDisplay) {
+            smsCodeDisplay.classList.add('d-none');
         }
     }
 
@@ -1098,6 +1163,174 @@ class VisitorApp {
                 sendSmsBtn.innerHTML = '<i class="bi bi-chat-dots"></i> SMS Gönder';
             }
         }
+    }
+
+    // Camera functionality
+    async openCameraModal() {
+        // Check if device is mobile
+        if (!this.isMobileDevice()) {
+            await this.showAlert('Uyarı', 'Bu özellik yalnızca mobil cihazlarda kullanılabilir.', 'warning');
+            return;
+        }
+
+        const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+        cameraModal.show();
+        
+        // Start camera after modal is shown
+        setTimeout(() => {
+            this.startCamera();
+        }, 500);
+    }
+
+    async startCamera() {
+        const video = document.getElementById('cameraVideo');
+        const loading = document.getElementById('cameraLoading');
+        const error = document.getElementById('cameraError');
+        const takePictureBtn = document.getElementById('takePictureBtn');
+
+        try {
+            // Show loading
+            loading.classList.remove('d-none');
+            error.classList.add('d-none');
+            video.classList.add('d-none');
+            
+            // Request camera access with back camera preference
+            const constraints = {
+                video: {
+                    facingMode: { ideal: 'environment' }, // Back camera
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = stream;
+            this.currentStream = stream;
+
+            // Show video when loaded
+            video.onloadedmetadata = () => {
+                loading.classList.add('d-none');
+                video.classList.remove('d-none');
+                takePictureBtn.disabled = false;
+            };
+
+        } catch (err) {
+            console.error('Camera access error:', err);
+            loading.classList.add('d-none');
+            error.classList.remove('d-none');
+            
+            let errorMessage = 'Kamera erişim hatası';
+            if (err.name === 'NotAllowedError') {
+                errorMessage = 'Kamera izni verilmedi. Lütfen cihaz ayarlarından izin verin.';
+            } else if (err.name === 'NotFoundError') {
+                errorMessage = 'Kamera bulunamadı. Lütfen cihazınızın kamerasını kontrol edin.';
+            } else if (err.name === 'NotSupportedError') {
+                errorMessage = 'Kamera bu cihazda desteklenmiyor.';
+            }
+            
+            document.getElementById('cameraErrorMessage').textContent = errorMessage;
+        }
+    }
+
+    takePicture() {
+        const video = document.getElementById('cameraVideo');
+        const canvas = document.getElementById('cameraCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw video frame to canvas
+        ctx.drawImage(video, 0, 0);
+
+        // Convert to base64
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Optimize image size
+        this.optimizeImage(imageData, (optimizedData) => {
+            // Show preview
+            this.showPhotoPreview(optimizedData);
+            
+            // Store image data
+            this.capturedImageData = optimizedData;
+            
+            // Close camera modal
+            this.closeCameraModal();
+        });
+    }
+
+    optimizeImage(imageData, callback) {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate new dimensions (max 640x480)
+            const maxWidth = 640;
+            const maxHeight = 480;
+            let { width, height } = img;
+            
+            if (width > height) {
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width = (width * maxHeight) / height;
+                    height = maxHeight;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw and compress
+            ctx.drawImage(img, 0, 0, width, height);
+            const optimizedData = canvas.toDataURL('image/jpeg', 0.7);
+            
+            callback(optimizedData);
+        };
+        img.src = imageData;
+    }
+
+    showPhotoPreview(imageData) {
+        const previewImage = document.getElementById('previewImage');
+        if (previewImage) {
+            previewImage.src = imageData;
+            previewImage.classList.remove('d-none');
+        }
+    }
+
+    closeCameraModal() {
+        // Stop camera stream
+        if (this.currentStream) {
+            this.currentStream.getTracks().forEach(track => track.stop());
+            this.currentStream = null;
+        }
+
+        // Reset UI
+        const video = document.getElementById('cameraVideo');
+        const loading = document.getElementById('cameraLoading');
+        const error = document.getElementById('cameraError');
+        const takePictureBtn = document.getElementById('takePictureBtn');
+
+        video.classList.add('d-none');
+        loading.classList.remove('d-none');
+        error.classList.add('d-none');
+        takePictureBtn.disabled = true;
+
+        // Close modal
+        const cameraModal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
+        if (cameraModal) {
+            cameraModal.hide();
+        }
+    }
+
+    isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+            || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     }
 
     // Cleanup when page unloads

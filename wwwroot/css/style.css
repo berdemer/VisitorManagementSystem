@@ -619,3 +619,103 @@ input[type="tel"]::placeholder {
     font-weight: 400;
     letter-spacing: normal;
 }
+
+/* Camera Modal Styling */
+#cameraModal .modal-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+}
+
+#cameraModal .modal-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#cameraModal .modal-body {
+    padding: 2rem;
+}
+
+#cameraVideo {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+#cameraContainer {
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cameraLoading {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#cameraLoading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+#takePictureBtn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    font-size: 1.1rem;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+#takePictureBtn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #20c997, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+}
+
+#takePictureBtn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+#cancelCameraBtn {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 2rem;
+}
+
+#cancelCameraBtn:hover {
+    background: linear-gradient(45deg, #5a6268, #6c757d);
+}
+
+/* Camera error styling */
+#cameraError {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border: none;
+    color: white;
+    border-radius: 10px;
+}
+
+/* Mobile optimizations for camera */
+@media (max-width: 768px) {
+    #cameraModal .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
+    
+    #cameraVideo {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    #cameraModal .modal-body {
+        padding: 1rem;
+    }
+    
+    #takePictureBtn, #cancelCameraBtn {
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+    }
+}
