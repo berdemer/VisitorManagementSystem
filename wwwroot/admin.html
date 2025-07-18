@@ -630,7 +630,9 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label for="residentFullName" class="form-label">Ad Soyad *</label>
-                                <input type="text" class="form-control" id="residentFullName" required>
+                                <input type="text" class="form-control" id="residentFullName" required 
+                                       oninput="window.admin.formatName(this)" 
+                                       placeholder="Büyük harflerle otomatik yazılır">
                             </div>
                         </div>
                         

@@ -147,17 +147,23 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
    - **Akıllı öneriler**: Daha önce kayıtlı ziyaretçiler listesinden seçin
    - **Otomatik doldurma**: Seçim yapılınca telefon ve plaka otomatik gelir
    - **Ziyaret geçmişi**: Kaç kez ziyaret ettiği gösterilir
-6. **SMS Doğrulama Sistemi (YENİ! 🆕):**
-   - **Ziyaretçi Telefon Numarası**: Telefon numarası girin
+6. **SMS Doğrulama Sistemi:**
+   - **Ziyaretçi Telefon Numarası**: Telefon numarası girin (otomatik maskeleme)
    - **📱 SMS Gönder**: Butona tıklayarak doğrulama kodu gönderin
    - **👀 Görsel Kod**: Gönderilen 3 haneli kod ekranda görünür
    - **⏱️ Otomatik Süre**: 5 dakika geçerli, 1 dakika rate limiting
    - **🔐 Güvenlik**: Ziyaretçi kodu güvenlik görevlisine gösterir
-7. **Diğer bilgiler:**
+7. **Canvas-Based Fotoğraf Sistemi (YENİ! 🆕):**
+   - **📸 Büyük Preview Area**: Modern gradient tasarım ile fotoğraf önizleme
+   - **🎯 Tek Tıkla Açılım**: Preview area'ya tıklayarak kamera modal açılır
+   - **📱 Mobil Kamera**: Arka kamera önceliği ile optimum çekim
+   - **🖱️ Video Tıklama**: Canlı video üzerine tıklayarak anında çekim
+   - **🎨 Canvas İşleme**: Hidden canvas ile profesyonel görüntü işleme
+   - **🖼️ Akıllı Önizleme**: Çekilen fotoğraf overlay ile gösterilir
+8. **Diğer bilgiler:**
    - Araç Plakası (isteğe bağlı)
    - Ziyaret Nedeni (isteğe bağlı)
-   - Fotoğraf (isteğe bağlı)
-8. "Ziyaretçi Kaydı Yap" butonuna tıklayın
+9. "Ziyaretçi Kaydı Yap" butonuna tıklayın
 
 ### Aktif Ziyaretçi Takibi
 1. "Aktif Ziyaretçiler" sekmesinde tüm aktif ziyaretçileri görün
@@ -277,14 +283,44 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **SMS**: Id, PhoneNumber, Code, CreatedAt, ExpiresAt
 - **Durum**: IsUsed, IsValid, IsExpired, CreatedBy
 
-## Yeni Özellikler (v2.3)
+## Yeni Özellikler (v2.7)
 
-### 🚀 Son Güncellemeler (v2.4)
-- **📱 SMS Doğrulama Sistemi**: Ziyaretçi telefon numarası doğrulaması 🆕
-- **👀 Görsel Kod Gösterimi**: Güvenlik görevlisi ekranında SMS kodu görünür 🆕
-- **⏱️ Otomatik Süre Sınırı**: 5 dakika süre sınırı ve 1 dakika rate limiting 🆕
-- **🔐 3 Haneli Güvenlik**: Kolay hatırlanabilir 3 haneli doğrulama kodu 🆕
-- **✨ Profesyonel Tasarım**: Animasyonlu buton ve kod gösterimi 🆕
+### 🚀 Son Güncellemeler (v2.8)
+- **✏️ Ziyaretçi Düzenleme Sistemi**: Aktif ziyaretçileri düzenleme özelliği 🆕
+- **🔄 Dinamik Form Modu**: Ekle/Düzenle modları arası geçiş 🆕
+- **🎨 Görsel Geri Bildirim**: Düzenleme modunda turuncu renk teması 🆕
+- **📋 Otomatik Form Doldurma**: Ziyaretçi bilgileri otomatik yüklenir 🆕
+- **💾 Güncelleme API**: PUT endpoint ile veritabanı güncelleme 🆕
+
+### 🚀 Önceki Güncellemeler (v2.7)
+- **📞 Sistem Genelinde Telefon Formatı Standardizasyonu**: Tutarlı telefon maskeleme
+- **⌨️ Giriş Formatı**: Tüm telefon girişleri `(123) 123 45 67` formatında
+- **📺 Görüntüleme Formatı**: Kayıtlı telefon numaraları `0 (123) 123 12 12` formatında
+- **🔄 Otomatik Dönüşüm**: Giriş sırasında `(555) 123 45 67`, görüntüleme sırasında `0 (555) 123 12 12`
+- **🎯 Tutarlı Deneyim**: Ziyaretçi, admin ve daire sahibi formlarında aynı format
+
+### 🚀 Önceki Güncellemeler (v2.6)
+- **📋 Admin Daire Sahibi Geliştirmeleri**: Kapsamlı form iyileştirmeleri
+- **📞 Telefon Numarası Maskeleme**: Daire sahibi iletişim alanlarında Türkiye formatı
+- **✉️ E-posta Doğrulama**: Gerçek zamanlı e-posta validasyonu ve görsel geri bildirim
+- **🔤 Otomatik Büyük Harf**: Daire sahibi isimleri için otomatik büyük harf dönüşümü
+- **🎯 Akıllı Form Davranışı**: İletişim türüne göre (Telefon/E-posta) dinamik form alanları
+- **✅ Gelişmiş Validasyon**: Kaydetmeden önce tüm alanların doğruluğunu kontrol
+
+### 🚀 Önceki Güncellemeler (v2.5)
+- **📸 Canvas-Based Fotoğraf Sistemi**: Security web interface tarzı profesyonel fotoğraf çekimi
+- **🎯 Tek Tıkla Çekim**: Video ekranına tıklayarak anında fotoğraf yakalama
+- **🖼️ Akıllı Önizleme Alanı**: Büyük preview area ile modern görsel deneyim
+- **📱 Mobil Kamera Optimizasyonu**: Arka kamera önceliği ve dokunmatik arayüz
+- **🎨 Profesyonel UI/UX**: Gradient tasarım, hover efektleri ve animasyonlar
+
+### 🏢 Önceki Güncellemeler (v2.4)
+- **📱 SMS Doğrulama Sistemi**: Ziyaretçi telefon numarası doğrulaması
+- **👀 Görsel Kod Gösterimi**: Güvenlik görevlisi ekranında SMS kodu görünür
+- **⏱️ Otomatik Süre Sınırı**: 5 dakika süre sınırı ve 1 dakika rate limiting
+- **🔐 3 Haneli Güvenlik**: Kolay hatırlanabilir 3 haneli doğrulama kodu
+- **✨ Profesyonel Tasarım**: Animasyonlu buton ve kod gösterimi
+- **📞 Telefon Numarası Maskeleme**: Türkiye standardı telefon formatı 0 (5XX) XXX XX XX
 
 ### 🏢 Önceki Güncellemeler (v2.3)
 - **👥 Ziyaretçi Autocomplete**: Ziyaretçi adı alanında akıllı arama özelliği
@@ -376,7 +412,7 @@ Bu proje özel kullanım için geliştirilmiştir.
 
 ---
 
-**Versiyon**: 2.4  
+**Versiyon**: 2.8  
 **Son Güncelleme**: 2025-07-18  
 **Geliştirici**: Claude Code Assistant
 
@@ -396,6 +432,12 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **🆕 Telefon Entegrasyonu**: Aktif
 ✅ **🆕 Admin Dropdown**: Aktif
 ✅ **🆕 SMS Doğrulama Sistemi**: Aktif
+✅ **🆕 Canvas-Based Fotoğraf Sistemi**: Aktif
+✅ **🆕 Telefon Numarası Maskeleme**: Aktif
+✅ **🆕 Admin Daire Sahibi Form Geliştirmeleri**: Aktif
+✅ **🆕 E-posta Validasyonu**: Aktif
+✅ **🆕 Otomatik Büyük Harf Dönüşümü**: Aktif
+✅ **🆕 Sistem Genelinde Telefon Formatı Standardizasyonu**: Aktif
 
 ### Çalıştırma Komutu
 ```bash
@@ -436,7 +478,7 @@ dotnet run --launch-profile http
 2. Admin panelinde kullanıcı adının yanında **dropdown oku** görünecek
 3. Dropdown açılınca **Ziyaretçi** ve **Çıkış** seçenekleri olacak
 
-#### SMS Doğrulama Sistemi Test (YENİ! 🆕):
+#### SMS Doğrulama Sistemi Test:
 1. **http://localhost:5002/visitor.html** adresini açın
 2. **Ziyaretçi Telefon Numarası** alanına **"5551234567"** girin
 3. **📱 SMS Gönder** butonuna tıklayın
@@ -445,3 +487,85 @@ dotnet run --launch-profile http
 6. **🔐 Güvenlik**: Ziyaretçi bu kodu güvenlik görevlisine gösterir
 7. **Animasyon**: Kod gösterimi slide-down animasyonu ile gelir
 8. **Otomatik Süre**: 5 dakika sonra kod geçersiz olur
+
+#### Canvas-Based Fotoğraf Sistemi Test (YENİ! 🆕):
+1. **http://localhost:5002/visitor.html** adresini açın
+2. **📸 Büyük Preview Area**: Gradient tasarımlı fotoğraf alanını görün
+3. **🎯 Tek Tıkla Açılım**: Preview area'ya tıklayın → Kamera modal açılır
+4. **📱 Mobil Kamera**: Arka kamera ile canlı görüntü başlar
+5. **🖱️ Video Tıklama**: Canlı video üzerine tıklayın → Anında fotoğraf çekilir
+6. **🎨 Canvas İşleme**: Hidden canvas otomatik görüntü işleme yapar
+7. **🖼️ Akıllı Önizleme**: Çekilen fotoğraf preview area'da görünür
+8. **✨ Hover Efekti**: Fotoğraf üzerine gelince "Yeni fotoğraf çek" overlay'i görünür
+9. **🔄 Yeniden Çekim**: Preview area'ya tekrar tıklayarak yeni fotoğraf çekin
+
+#### Telefon Numarası Maskeleme Test (YENİ! 🆕):
+1. **Daire Sahibi Telefon** alanına **"5551234567"** yazın
+2. **Giriş Formatı**: **"(555) 123 45 67"** formatında görünür
+3. **Ziyaretçi Telefon** alanına **"5059876543"** yazın
+4. **Maskeleme**: **"(505) 987 65 43"** görünümü alır
+5. **API Gönderim**: Form gönderiminde temiz numara **"05551234567"** gönderilir
+6. **Görüntüleme**: Kayıtlı numaralar **"0 (555) 123 12 12"** formatında gösterilir
+7. **Autocomplete**: Önceden kayıtlı numaralar da otomatik formatlanır
+
+#### Admin Panel Daire Sahibi Geliştirmeleri Test (YENİ! 🆕):
+1. **http://localhost:5002/admin.html** - admin/admin123 ile giriş yapın
+2. **"Daire Sahipleri"** sekmesine geçin
+3. **"Yeni Daire Sahibi"** butonuna tıklayın
+4. **Otomatik Büyük Harf Test**:
+   - **Ad Soyad** alanına **"ahmet yılmaz"** yazın
+   - **Otomatik**: **"AHMET YILMAZ"** şeklinde büyük harfe dönüşür
+5. **İletişim Ekle** butonuna tıklayın
+6. **Telefon Maskeleme Test**:
+   - **İletişim Türü**: **"Telefon"** seçin
+   - **İletişim Bilgisi** alanına **"5551234567"** yazın
+   - **Giriş Formatı**: **"(555) 123 45 67"** görünümü alır
+   - **Monospace font** ve **özel placeholder** uygulanır
+7. **E-posta Validasyon Test**:
+   - **İletişim Türü**: **"E-posta"** seçin
+   - **Geçersiz E-posta**: **"test@"** yazın → **Kırmızı border** ve **hata ikonu**
+   - **Geçerli E-posta**: **"test@example.com"** yazın → **Yeşil border** ve **onay ikonu**
+   - **Otomatik küçük harf** dönüşümü ve **boşluk temizleme**
+8. **Dinamik İletişim Türü Değişimi Test**:
+   - **İletişim Ekle** → **"Telefon"** seçin → **"5551234567"** yazın
+   - **İletişim Türü**: **"E-posta"** değiştirin → **Telefon numarası temizlenir**
+   - **"test@example.com"** yazın → **E-posta formatına geçer**
+   - **Tekrar "Telefon"** seçin → **E-posta temizlenir**
+9. **Gelişmiş Validasyon Test**:
+   - **Geçersiz telefon** (9 haneden az): **"555123456"** → **Hata: En az 10 hane**
+   - **Yanlış format**: **"1234567890"** → **Hata: 5 ile başlamalı (cep) veya 0 ile (sabit)**
+   - **Geçersiz e-posta**: **"test@.com"** → **Hata: Geçersiz e-posta**
+   - **Boş etiket**: İletişim bilgisi varken etiket boş → **Otomatik "İletişim 1, 2..." etiketi**
+   - **Tüm alanlar doğru** olduğunda başarıyla kayıt olur
+10. **Görsel Geri Bildirim Test**:
+    - **Hover Efektleri**: İletişim satırları üzerine gelince **mavi border** ve **gölge**
+    - **Real-time Validation**: Yazarken anında **yeşil/kırmızı** geri bildirim
+    - **Font Değişimi**: Telefon seçince **monospace**, e-posta seçince **normal font**
+
+#### Ziyaretçi Düzenleme Sistemi Test (YENİ! 🆕):
+1. **http://localhost:5002/visitor.html** adresini açın
+2. **Ziyaretçi kaydı** oluşturun (gerekli alanları doldurun)
+3. **"Aktif Ziyaretçiler"** sekmesine geçin
+4. **Düzenleme Butonu Test**:
+   - **Mavi "Düzenle"** butonuna tıklayın
+   - **Otomatik**: "Ziyaretçi Kaydı" sekmesine geçer
+   - **Form başlığı**: **"Ziyaretçi Kaydını Düzenle"** olur
+   - **Turuncu tema**: Form header ve buton rengi değişir
+5. **Otomatik Form Doldurma Test**:
+   - **Tüm alanlar** otomatik doldurulur
+   - **Telefon numaraları** doğru formatlanır
+   - **Fotoğraf** varsa önizleme gösterilir
+6. **Düzenleme Test**:
+   - **Ziyaretçi adını** değiştirin
+   - **Telefon numarasını** güncelleyin
+   - **"Ziyaretçi Kaydını Güncelle"** butonuna tıklayın
+   - **Başarı mesajı**: "Ziyaretçi kaydı başarıyla güncellendi"
+7. **İptal Test**:
+   - **Düzenle** butonuna tıklayın
+   - **Değişiklik** yapın
+   - **"İptal"** butonuna tıklayın
+   - **Form sıfırlanır** ve **yeşil tema** geri gelir
+8. **Validasyon Test**:
+   - **Zorunlu alanları** boşaltın
+   - **Güncelleme** yapmaya çalışın
+   - **Uyarı mesajları** gösterilir

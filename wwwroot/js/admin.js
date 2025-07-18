@@ -577,7 +577,7 @@ class AdminApp {
                     <strong>${this.escapeHtml(visitor.fullName)}</strong>
                     ${visitor.idNumber ? `<br><small class="text-muted">TC: ${this.escapeHtml(visitor.idNumber)}</small>` : ''}
                     ${visitor.residentName ? `<br><small class="text-muted">Daire Sahibi: ${this.escapeHtml(visitor.residentName)}</small>` : ''}
-                    ${visitor.visitorPhone ? `<br><small class="text-muted">Ziyaretçi Tel: ${this.escapeHtml(visitor.visitorPhone)}</small>` : ''}
+                    ${visitor.visitorPhone ? `<br><small class="text-muted">Ziyaretçi Tel: ${this.escapeHtml(this.formatPhoneDisplay(visitor.visitorPhone))}</small>` : ''}
                 </td>
                 <td>
                     <a href="#" class="text-decoration-none" onclick="admin.filterByApartment('${this.escapeHtml(visitor.apartmentNumber)}'); return false;">
@@ -1624,13 +1624,14 @@ class AdminApp {
             <div class="contact-row mb-2" data-index="${index}">
                 <div class="row">
                     <div class="col-md-3">
-                        <select class="form-control" name="contactType_${index}">
+                        <select class="form-control" name="contactType_${index}" onchange="adminApp.handleContactTypeChange(this, ${index})">
                             <option value="Phone" ${contact?.contactType === 'Phone' ? 'selected' : ''}>Telefon</option>
                             <option value="Email" ${contact?.contactType === 'Email' ? 'selected' : ''}>E-posta</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="contactValue_${index}" placeholder="İletişim bilgisi" value="${contact?.contactValue || ''}">
+                        <input type="text" class="form-control" name="contactValue_${index}" placeholder="İletişim bilgisi" value="${contact?.contactValue || ''}" 
+                               oninput="adminApp.handleContactValueInput(this, ${index})">
                     </div>
                     <div class="col-md-2">
                         <input type="text" class="form-control" name="contactLabel_${index}" placeholder="Etiket" value="${contact?.label || ''}">
@@ -1652,6 +1653,25 @@ class AdminApp {
         `;
         
         container.insertAdjacentHTML('beforeend', contactHtml);
+        
+        // Apply formatting to existing value if present
+        const contactValueInput = container.querySelector(`[name="contactValue_${index}"]`);
+        const contactTypeSelect = container.querySelector(`[name="contactType_${index}"]`);
+        
+        if (contactValueInput && contactTypeSelect) {
+            // Apply initial formatting based on contact type
+            this.handleContactTypeChange(contactTypeSelect, index);
+            
+            // If there's an existing value, format it according to type
+            if (contact && contact.contactValue) {
+                if (contact.contactType === 'Phone') {
+                    this.formatPhoneNumber(contactValueInput);
+                } else if (contact.contactType === 'Email') {
+                    contactValueInput.value = contact.contactValue.toLowerCase();
+                    this.handleContactValueInput(contactValueInput, index);
+                }
+            }
+        }
     }
 
     addVehicleRow(vehicle = null) {
@@ -1699,6 +1719,13 @@ class AdminApp {
 
             if (!fullName || !block || !subBlock || !doorNumber) {
                 this.showError('Ad soyad, Ana Blok, Alt Blok ve Kapı No zorunludur');
+                return;
+            }
+
+            // Validate email contacts
+            const emailValidationResult = this.validateResidentContacts();
+            if (!emailValidationResult.isValid) {
+                this.showError(emailValidationResult.message);
                 return;
             }
 
@@ -2199,9 +2226,236 @@ class AdminApp {
         }
     }
 
+    // Phone number masking function for Turkish format
+    formatPhoneNumber(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 10) value = value.substring(0, 10);
+        
+        // Apply phone number formatting for input: (123) 123 45 67
+        let formattedValue = '';
+        
+        if (value.length > 0) {
+            // Add opening parenthesis and area code
+            if (value.length >= 1) {
+                formattedValue = '(' + value.substring(0, 3);
+            }
+            
+            // Add closing parenthesis after area code
+            if (value.length >= 3) {
+                formattedValue += ')';
+            }
+            
+            // Add first part of number
+            if (value.length >= 4) {
+                formattedValue += ' ' + value.substring(3, 6);
+            }
+            
+            // Add second part of number
+            if (value.length >= 7) {
+                formattedValue += ' ' + value.substring(6, 8);
+            }
+            
+            // Add third part of number
+            if (value.length >= 9) {
+                formattedValue += ' ' + value.substring(8, 10);
+            }
+        }
+        
+        input.value = formattedValue;
+        
+        // Store the clean number for API calls (add leading 0)
+        const cleanValue = value.length > 0 ? '0' + value : '';
+        input.setAttribute('data-clean-value', cleanValue);
+    }
+
+    // Phone number display format (for showing saved data)
+    formatPhoneDisplay(phoneNumber) {
+        if (!phoneNumber) return '';
+        
+        // Remove all non-digits
+        let cleaned = phoneNumber.replace(/\D/g, '');
+        
+        // Handle different lengths
+        if (cleaned.length === 10) {
+            // 5551234567 -> 0 (555) 123 12 12
+            return `0 (${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}`;
+        } else if (cleaned.length === 11 && cleaned.startsWith('0')) {
+            // 05551234567 -> 0 (555) 123 12 12
+            return `0 (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        } else if (cleaned.length === 11) {
+            // 15551234567 -> 1 (555) 123 12 12
+            return `${cleaned.substring(0, 1)} (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        
+        return phoneNumber; // Return original if can't format
+    }
+
+    // Email validation function
+    validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Automatic uppercase conversion for names
+    formatName(input) {
+        let value = input.value;
+        // Convert to uppercase and handle Turkish characters
+        value = value.toLocaleUpperCase('tr-TR');
+        input.value = value;
+    }
+
+    // Handle contact type change (Phone/Email)
+    handleContactTypeChange(selectElement, index) {
+        const contactValueInput = document.querySelector(`[name="contactValue_${index}"]`);
+        const contactType = selectElement.value;
+        
+        // Clear validation classes
+        contactValueInput.classList.remove('is-valid', 'is-invalid');
+        
+        if (contactType === 'Phone') {
+            contactValueInput.type = 'tel';
+            contactValueInput.placeholder = '(5XX) XXX XX XX';
+            contactValueInput.style.fontFamily = "'Courier New', monospace";
+            contactValueInput.style.fontSize = '1rem';
+            contactValueInput.style.letterSpacing = '0.5px';
+            contactValueInput.style.fontWeight = '500';
+            
+            // Clear and reformat existing value if it's a phone number
+            const currentValue = contactValueInput.value;
+            if (currentValue) {
+                // Check if it looks like an email, if so clear it
+                if (currentValue.includes('@')) {
+                    contactValueInput.value = '';
+                } else {
+                    // Re-format as phone number
+                    this.formatPhoneNumber(contactValueInput);
+                }
+            }
+        } else if (contactType === 'Email') {
+            contactValueInput.type = 'email';
+            contactValueInput.placeholder = 'ornek@email.com';
+            contactValueInput.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+            contactValueInput.style.fontSize = '';
+            contactValueInput.style.letterSpacing = '';
+            contactValueInput.style.fontWeight = '';
+            
+            // Clear and reformat existing value if it's an email
+            const currentValue = contactValueInput.value;
+            if (currentValue) {
+                // Check if it looks like a phone number, if so clear it
+                if (/^\d+/.test(currentValue.replace(/\D/g, ''))) {
+                    contactValueInput.value = '';
+                } else {
+                    // Re-format as email (lowercase)
+                    contactValueInput.value = currentValue.toLowerCase();
+                    this.handleContactValueInput(contactValueInput, index);
+                }
+            }
+        }
+    }
+
+    // Handle contact value input (phone masking or email validation)
+    handleContactValueInput(input, index) {
+        const contactTypeSelect = document.querySelector(`[name="contactType_${index}"]`);
+        if (!contactTypeSelect) return;
+        
+        const contactType = contactTypeSelect.value;
+        
+        if (contactType === 'Phone') {
+            // Apply phone number masking
+            this.formatPhoneNumber(input);
+            
+            // Validate phone number length
+            const cleanValue = input.value.replace(/\D/g, '');
+            if (cleanValue.length > 0) {
+                if (cleanValue.length >= 10 && cleanValue.length <= 11) {
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                } else {
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                }
+            } else {
+                input.classList.remove('is-invalid', 'is-valid');
+            }
+        } else if (contactType === 'Email') {
+            // Remove invalid characters and provide visual feedback
+            let value = input.value.toLowerCase().trim();
+            
+            // Remove spaces in the middle of email
+            value = value.replace(/\s+/g, '');
+            input.value = value;
+            
+            // Add/remove validation class for visual feedback
+            if (value.length > 0) {
+                if (this.validateEmail(value)) {
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                } else {
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                }
+            } else {
+                input.classList.remove('is-invalid', 'is-valid');
+            }
+        }
+    }
+
+    // Validate all resident contacts before saving
+    validateResidentContacts() {
+        const contactRows = document.querySelectorAll('.contact-row');
+        let contactCount = 0;
+        
+        for (let row of contactRows) {
+            const index = row.dataset.index;
+            const contactType = row.querySelector(`[name="contactType_${index}"]`).value;
+            const contactValue = row.querySelector(`[name="contactValue_${index}"]`).value.trim();
+            const contactLabel = row.querySelector(`[name="contactLabel_${index}"]`).value.trim();
+            
+            if (contactValue) {
+                contactCount++;
+                
+                if (contactType === 'Email') {
+                    if (!this.validateEmail(contactValue)) {
+                        return {
+                            isValid: false,
+                            message: `Geçersiz e-posta adresi (${contactLabel || 'İletişim ' + (contactCount)}): ${contactValue}`
+                        };
+                    }
+                } else if (contactType === 'Phone') {
+                    const cleanPhone = contactValue.replace(/\D/g, '');
+                    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+                        return {
+                            isValid: false,
+                            message: `Geçersiz telefon numarası (${contactLabel || 'İletişim ' + (contactCount)}): ${contactValue} - En az 10 haneli olmalıdır`
+                        };
+                    }
+                    
+                    // Additional Turkish phone number validation
+                    if (cleanPhone.length === 11 && !cleanPhone.startsWith('0')) {
+                        return {
+                            isValid: false,
+                            message: `Geçersiz telefon formatı (${contactLabel || 'İletişim ' + (contactCount)}): Türkiye numaraları 0 ile başlamalıdır`
+                        };
+                    }
+                    
+                    if (cleanPhone.length === 10 && !cleanPhone.startsWith('5')) {
+                        return {
+                            isValid: false,
+                            message: `Geçersiz telefon formatı (${contactLabel || 'İletişim ' + (contactCount)}): Cep telefonu numaraları 5 ile başlamalıdır`
+                        };
+                    }
+                }
+            }
+        }
+        
+        return { isValid: true };
+    }
+
 }
 
 // Initialize admin app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.admin = new AdminApp();
+    window.adminApp = window.admin; // Create alias for easier access
 });

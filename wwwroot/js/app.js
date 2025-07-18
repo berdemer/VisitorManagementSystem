@@ -5,6 +5,8 @@ class VisitorApp {
         this.token = null;
         this.user = null;
         this.refreshInterval = null;
+        this.currentEditingVisitor = null;
+        this.isEditMode = false;
         this.init();
     }
 
@@ -138,14 +140,18 @@ class VisitorApp {
         if (visitorForm) {
             visitorForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                this.createVisitor();
+                if (this.isEditMode) {
+                    this.updateVisitor();
+                } else {
+                    this.createVisitor();
+                }
             });
         }
 
         // Photo capture events
-        const captureBtn = document.getElementById('captureBtn');
-        if (captureBtn) {
-            captureBtn.addEventListener('click', () => {
+        const cameraPreview = document.getElementById('cameraPreview');
+        if (cameraPreview) {
+            cameraPreview.addEventListener('click', () => {
                 this.openCameraModal();
             });
         }
@@ -171,12 +177,7 @@ class VisitorApp {
             });
         }
 
-        const photoFile = document.getElementById('photoFile');
-        if (photoFile) {
-            photoFile.addEventListener('change', (e) => {
-                this.previewPhoto(e.target.files[0]);
-            });
-        }
+        // File input removed - using only camera capture now
 
         // Refresh button
         const refreshBtn = document.getElementById('refreshBtn');
@@ -285,11 +286,8 @@ class VisitorApp {
             if (response.ok) {
                 const visitor = await response.json();
                 
-                // Upload photo if selected or captured
-                const photoFile = document.getElementById('photoFile');
-                if (photoFile && photoFile.files[0]) {
-                    await this.uploadPhoto(visitor.id, photoFile.files[0]);
-                } else if (this.capturedImageData) {
+                // Upload captured photo if available
+                if (this.capturedImageData) {
                     await this.uploadCapturedPhoto(visitor.id, this.capturedImageData);
                 }
 
@@ -304,6 +302,80 @@ class VisitorApp {
         } catch (error) {
             console.error('Create visitor error:', error);
             await this.showAlert('Hata', 'Kayıt işlemi sırasında hata oluştu', 'error');
+        }
+    }
+
+    async updateVisitor() {
+        // Get form values
+        const blockSelect = this.getInputValue('blockSelect');
+        const subBlockSelect = this.getInputValue('subBlockSelect');
+        const apartmentNumber = this.getInputValue('apartmentNumber');
+        const residentName = this.getInputValue('residentName');
+        const residentPhone = this.getInputValue('residentPhone');
+        const fullName = this.getInputValue('fullName');
+        const visitorPhone = this.getInputValue('visitorPhone');
+        const licensePlate = this.getInputValue('licensePlate');
+        const visitReason = this.getInputValue('visitReason');
+
+        // Validate required fields
+        if (!blockSelect || !subBlockSelect || !apartmentNumber) {
+            await this.showAlert('Eksik Bilgi', 'Ana Blok, Alt Blok ve Daire No zorunludur', 'warning');
+            return;
+        }
+
+        if (!residentName) {
+            await this.showAlert('Eksik Bilgi', 'Daire sahibi adı zorunludur', 'warning');
+            return;
+        }
+
+        if (!residentPhone) {
+            await this.showAlert('Eksik Bilgi', 'Daire sahibi telefon numarası zorunludur', 'warning');
+            return;
+        }
+
+        if (!fullName) {
+            await this.showAlert('Eksik Bilgi', 'Ziyaretçi adı soyadı zorunludur', 'warning');
+            return;
+        }
+
+        // Create full apartment number
+        const fullApartmentNumber = `${blockSelect}${subBlockSelect}-${apartmentNumber}`;
+
+        const visitorData = {
+            fullName: fullName,
+            apartmentNumber: fullApartmentNumber,
+            residentName: residentName,
+            residentPhone: residentPhone,
+            visitorPhone: visitorPhone || null,
+            licensePlate: licensePlate || null,
+            visitReason: visitReason || 'Belirtilmemiş',
+            notes: `Blok: ${blockSelect}${subBlockSelect}, Daire: ${apartmentNumber}, Daire Sahibi: ${residentName}`
+        };
+
+        try {
+            const response = await this.apiCall(`/visitor/${this.currentEditingVisitor.id}`, 'PUT', visitorData);
+
+            if (response.ok) {
+                const visitor = await response.json();
+                
+                // Upload captured photo if available
+                if (this.capturedImageData) {
+                    await this.uploadCapturedPhoto(visitor.id, this.capturedImageData);
+                }
+
+                // Reset edit mode
+                this.cancelEdit();
+                this.loadActiveVisitors();
+                
+                // Toast notification for success
+                this.showSuccess('Ziyaretçi kaydı başarıyla güncellendi');
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                await this.showAlert('Hata', errorData.message || 'Ziyaretçi kaydı güncellenemedi', 'error');
+            }
+        } catch (error) {
+            console.error('Update visitor error:', error);
+            await this.showAlert('Hata', 'Güncelleme işlemi sırasında hata oluştu', 'error');
         }
     }
 
@@ -397,8 +469,8 @@ class VisitorApp {
                         <div class="text-muted small">
                             <i class="bi bi-house"></i> ${this.escapeHtml(visitor.apartmentNumber)}
                             ${residentName ? `<br><i class="bi bi-person"></i> Daire Sahibi: ${this.escapeHtml(residentName)}` : ''}
-                            ${residentPhone ? `<br><i class="bi bi-telephone"></i> Daire Tel: ${this.escapeHtml(residentPhone)}` : ''}
-                            ${visitorPhone ? `<br><i class="bi bi-phone"></i> Ziyaretçi Tel: ${this.escapeHtml(visitorPhone)}` : ''}
+                            ${residentPhone ? `<br><i class="bi bi-telephone"></i> Daire Tel: ${this.escapeHtml(this.formatPhoneDisplay(residentPhone))}` : ''}
+                            ${visitorPhone ? `<br><i class="bi bi-phone"></i> Ziyaretçi Tel: ${this.escapeHtml(this.formatPhoneDisplay(visitorPhone))}` : ''}
                             ${visitor.licensePlate ? `<br><i class="bi bi-car-front"></i> Plaka: ${this.escapeHtml(visitor.licensePlate)}` : ''}
                             ${visitor.visitReason ? `<br><i class="bi bi-info-circle"></i> ${this.escapeHtml(visitor.visitReason)}` : ''}
                             ${visitor.photoPath ? `<br><a href="${this.escapeHtml(visitor.photoPath)}" target="_blank" class="photo-link"><i class="bi bi-image"></i> Fotoğraf görüntüle</a>` : ''}
@@ -409,6 +481,9 @@ class VisitorApp {
                     </div>
                     <div class="d-flex flex-column gap-1">
                         <span class="badge bg-success">Aktif</span>
+                        <button class="btn btn-sm btn-primary" onclick="app.editVisitor(${visitor.id})">
+                            <i class="bi bi-pencil"></i> Düzenle
+                        </button>
                         ${this.token ? `
                             <button class="btn btn-sm btn-warning" onclick="app.checkoutVisitor(${visitor.id})">
                                 <i class="bi bi-box-arrow-right"></i> Çıkış
@@ -469,19 +544,7 @@ class VisitorApp {
         this.updateUIForAnonymousUser();
     }
 
-    previewPhoto(file) {
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.getElementById('previewImage');
-            if (img) {
-                img.src = e.target.result;
-                img.classList.remove('d-none');
-            }
-        };
-        reader.readAsDataURL(file);
-    }
+    // File preview removed - using only camera capture now
 
     resetForm() {
         const form = document.getElementById('visitorForm');
@@ -502,6 +565,18 @@ class VisitorApp {
         if (previewImage) {
             previewImage.classList.add('d-none');
             previewImage.src = '';
+        }
+
+        // Reset camera preview area
+        const cameraPreview = document.getElementById('cameraPreview');
+        if (cameraPreview) {
+            cameraPreview.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="bi bi-camera fa-3x mb-2"></i>
+                    <p class="mb-0">Fotoğraf çekmek için tıklayın</p>
+                    <small class="text-muted">Kamera ile canlı fotoğraf çekimi</small>
+                </div>
+            `;
         }
 
         // Clear captured image data
@@ -912,7 +987,7 @@ class VisitorApp {
                     <div class="fw-bold">${this.escapeHtml(resident.fullName)}</div>
                     <div class="text-muted small">
                         <i class="bi bi-building"></i> ${this.escapeHtml(resident.apartmentNumber)}
-                        ${phoneContact ? `<i class="bi bi-telephone ms-2"></i> ${this.escapeHtml(phoneContact.contactValue)}` : ''}
+                        ${phoneContact ? `<i class="bi bi-telephone ms-2"></i> ${this.escapeHtml(this.formatPhoneDisplay(phoneContact.contactValue))}` : ''}
                     </div>
                 </div>
             `;
@@ -1006,7 +1081,7 @@ class VisitorApp {
                      style="cursor: pointer;">
                     <div class="fw-bold">${this.escapeHtml(visitor.fullName)}</div>
                     <div class="text-muted small">
-                        ${visitor.visitorPhone ? `<i class="bi bi-telephone"></i> ${this.escapeHtml(visitor.visitorPhone)}` : ''}
+                        ${visitor.visitorPhone ? `<i class="bi bi-telephone"></i> ${this.escapeHtml(this.formatPhoneDisplay(visitor.visitorPhone))}` : ''}
                         ${visitor.licensePlate ? `<i class="bi bi-car-front ms-2"></i> ${this.escapeHtml(visitor.licensePlate)}` : ''}
                         ${visitor.visitCount ? `<span class="badge bg-secondary ms-2">${visitor.visitCount} ziyaret</span>` : ''}
                     </div>
@@ -1063,50 +1138,68 @@ class VisitorApp {
         // Get only digits
         let value = input.value.replace(/\D/g, '');
         
-        // Limit to 11 digits for Turkish phone numbers
-        if (value.length > 11) {
-            value = value.substring(0, 11);
+        // Limit to 10 digits for input masking (without leading 0)
+        if (value.length > 10) {
+            value = value.substring(0, 10);
         }
         
-        // Apply Turkish phone number formatting
+        // Apply phone number formatting for input: (123) 123 45 67
         let formattedValue = '';
         
         if (value.length > 0) {
-            // Start with 0
-            if (value.length >= 1) {
-                formattedValue = value.substring(0, 1);
-            }
-            
             // Add opening parenthesis and area code
-            if (value.length >= 2) {
-                formattedValue += ' (' + value.substring(1, 4);
+            if (value.length >= 1) {
+                formattedValue = '(' + value.substring(0, 3);
             }
             
             // Add closing parenthesis after area code
-            if (value.length >= 4) {
+            if (value.length >= 3) {
                 formattedValue += ')';
             }
             
             // Add first part of number
-            if (value.length >= 5) {
-                formattedValue += ' ' + value.substring(4, 7);
+            if (value.length >= 4) {
+                formattedValue += ' ' + value.substring(3, 6);
             }
             
             // Add second part of number
-            if (value.length >= 8) {
-                formattedValue += ' ' + value.substring(7, 9);
+            if (value.length >= 7) {
+                formattedValue += ' ' + value.substring(6, 8);
             }
             
             // Add third part of number
-            if (value.length >= 10) {
-                formattedValue += ' ' + value.substring(9, 11);
+            if (value.length >= 9) {
+                formattedValue += ' ' + value.substring(8, 10);
             }
         }
         
         input.value = formattedValue;
         
-        // Store the clean number for API calls
-        input.setAttribute('data-clean-value', value);
+        // Store the clean number for API calls (add leading 0)
+        const cleanValue = value.length > 0 ? '0' + value : '';
+        input.setAttribute('data-clean-value', cleanValue);
+    }
+
+    // Phone number display format (for showing saved data)
+    formatPhoneDisplay(phoneNumber) {
+        if (!phoneNumber) return '';
+        
+        // Remove all non-digits
+        let cleaned = phoneNumber.replace(/\D/g, '');
+        
+        // Handle different lengths
+        if (cleaned.length === 10) {
+            // 5551234567 -> 0 (555) 123 12 12
+            return `0 (${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}`;
+        } else if (cleaned.length === 11 && cleaned.startsWith('0')) {
+            // 05551234567 -> 0 (555) 123 12 12
+            return `0 (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        } else if (cleaned.length === 11) {
+            // 15551234567 -> 1 (555) 123 12 12
+            return `${cleaned.substring(0, 1)} (${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        
+        return phoneNumber; // Return original if can't format
     }
 
     async sendSmsVerification() {
@@ -1167,12 +1260,6 @@ class VisitorApp {
 
     // Camera functionality
     async openCameraModal() {
-        // Check if device is mobile
-        if (!this.isMobileDevice()) {
-            await this.showAlert('Uyarı', 'Bu özellik yalnızca mobil cihazlarda kullanılabilir.', 'warning');
-            return;
-        }
-
         const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
         cameraModal.show();
         
@@ -1194,10 +1281,10 @@ class VisitorApp {
             error.classList.add('d-none');
             video.classList.add('d-none');
             
-            // Request camera access with back camera preference
+            // Request camera access with flexible constraints
             const constraints = {
                 video: {
-                    facingMode: { ideal: 'environment' }, // Back camera
+                    facingMode: { ideal: 'environment' }, // Back camera (mobile) / Any camera (desktop)
                     width: { ideal: 640 },
                     height: { ideal: 480 }
                 }
@@ -1212,6 +1299,11 @@ class VisitorApp {
                 loading.classList.add('d-none');
                 video.classList.remove('d-none');
                 takePictureBtn.disabled = false;
+                
+                // Add click event to video for canvas-style capture
+                video.addEventListener('click', () => {
+                    this.takePicture();
+                });
             };
 
         } catch (err) {
@@ -1296,6 +1388,21 @@ class VisitorApp {
     }
 
     showPhotoPreview(imageData) {
+        const cameraPreview = document.getElementById('cameraPreview');
+        if (cameraPreview) {
+            // Update camera preview area with captured image
+            cameraPreview.innerHTML = `
+                <img src="${imageData}" alt="Ziyaretçi Fotoğrafı">
+                <div class="capture-overlay">
+                    <div class="text-center">
+                        <i class="bi bi-camera-fill fa-2x mb-2"></i>
+                        <p class="mb-0">Yeni fotoğraf çekmek için tıklayın</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Also update the old preview image for backward compatibility
         const previewImage = document.getElementById('previewImage');
         if (previewImage) {
             previewImage.src = imageData;
@@ -1331,6 +1438,170 @@ class VisitorApp {
     isMobileDevice() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
             || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+    }
+
+    // Edit visitor functionality
+    async editVisitor(visitorId) {
+        try {
+            // Fetch visitor data
+            const response = await fetch(`${this.apiBase}/visitor/${visitorId}`);
+            if (!response.ok) {
+                throw new Error('Ziyaretçi bilgileri alınamadı');
+            }
+            
+            const visitor = await response.json();
+            
+            // Set edit mode
+            this.currentEditingVisitor = visitor;
+            this.isEditMode = true;
+            
+            // Switch to visitor registration tab
+            const entryTab = document.getElementById('entry-tab');
+            const entryTabPane = document.getElementById('entry');
+            
+            if (entryTab && entryTabPane) {
+                entryTab.click();
+            }
+            
+            // Fill form with visitor data
+            this.fillFormWithVisitorData(visitor);
+            
+            // Update form UI for edit mode
+            this.updateFormForEditMode();
+            
+        } catch (error) {
+            console.error('Edit visitor error:', error);
+            await this.showAlert('Hata', 'Ziyaretçi düzenleme sırasında hata oluştu: ' + error.message, 'error');
+        }
+    }
+
+    // Fill form with visitor data
+    fillFormWithVisitorData(visitor) {
+        // Parse apartment number (e.g., "A1-12" -> A, 1, 12)
+        const apartmentParts = visitor.apartmentNumber.match(/^([A-Z])(\d+)-(\d+)$/);
+        if (apartmentParts) {
+            const [, block, subBlock, apartmentNo] = apartmentParts;
+            document.getElementById('blockSelect').value = block;
+            document.getElementById('subBlockSelect').value = subBlock;
+            document.getElementById('apartmentNumber').value = apartmentNo;
+        }
+        
+        // Fill visitor information
+        document.getElementById('fullName').value = visitor.fullName;
+        document.getElementById('visitorPhone').value = visitor.visitorPhone || '';
+        document.getElementById('licensePlate').value = visitor.licensePlate || '';
+        document.getElementById('visitReason').value = visitor.visitReason || '';
+        
+        // Fill resident information
+        document.getElementById('residentName').value = visitor.residentName || '';
+        document.getElementById('residentPhone').value = visitor.residentPhone || '';
+        
+        // Format phone numbers
+        const visitorPhoneInput = document.getElementById('visitorPhone');
+        const residentPhoneInput = document.getElementById('residentPhone');
+        
+        if (visitorPhoneInput.value) {
+            this.formatPhoneNumber(visitorPhoneInput);
+        }
+        
+        if (residentPhoneInput.value) {
+            this.formatPhoneNumber(residentPhoneInput);
+        }
+        
+        // Handle photo if exists
+        if (visitor.photoPath) {
+            this.showPhotoPreview(visitor.photoPath);
+        }
+    }
+
+    // Update form UI for edit mode
+    updateFormForEditMode() {
+        const submitButton = document.querySelector('#visitorForm button[type="submit"]');
+        if (submitButton) {
+            submitButton.innerHTML = '<i class="bi bi-check-circle"></i> Ziyaretçi Kaydını Güncelle';
+            submitButton.classList.remove('btn-success');
+            submitButton.classList.add('btn-warning');
+        }
+        
+        // Add cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.className = 'btn btn-secondary btn-lg ms-2';
+        cancelButton.innerHTML = '<i class="bi bi-x-circle"></i> İptal';
+        cancelButton.onclick = () => this.cancelEdit();
+        
+        if (submitButton && !submitButton.nextElementSibling) {
+            submitButton.parentNode.appendChild(cancelButton);
+        }
+        
+        // Update form title
+        const formTitle = document.querySelector('#entry .card-header h5');
+        if (formTitle) {
+            formTitle.innerHTML = '<i class="bi bi-pencil"></i> Ziyaretçi Kaydını Düzenle';
+        }
+        
+        // Add edit-mode class to form
+        const formCard = document.querySelector('#entry .card');
+        if (formCard) {
+            formCard.classList.add('edit-mode');
+        }
+    }
+
+    // Cancel edit mode
+    cancelEdit() {
+        this.isEditMode = false;
+        this.currentEditingVisitor = null;
+        
+        // Reset form
+        document.getElementById('visitorForm').reset();
+        
+        // Reset form UI
+        this.resetFormUI();
+        
+        // Clear photo preview
+        this.clearPhotoPreview();
+    }
+
+    // Reset form UI to add mode
+    resetFormUI() {
+        const submitButton = document.querySelector('#visitorForm button[type="submit"]');
+        if (submitButton) {
+            submitButton.innerHTML = '<i class="bi bi-check-circle"></i> Ziyaretçi Kaydı Yap';
+            submitButton.classList.remove('btn-warning');
+            submitButton.classList.add('btn-success');
+        }
+        
+        // Remove cancel button
+        const cancelButton = submitButton?.nextElementSibling;
+        if (cancelButton && cancelButton.textContent.includes('İptal')) {
+            cancelButton.remove();
+        }
+        
+        // Reset form title
+        const formTitle = document.querySelector('#entry .card-header h5');
+        if (formTitle) {
+            formTitle.innerHTML = '<i class="bi bi-person-plus"></i> Ziyaretçi Kaydı';
+        }
+        
+        // Remove edit-mode class from form
+        const formCard = document.querySelector('#entry .card');
+        if (formCard) {
+            formCard.classList.remove('edit-mode');
+        }
+    }
+
+    // Clear photo preview
+    clearPhotoPreview() {
+        const cameraPreview = document.getElementById('cameraPreview');
+        if (cameraPreview) {
+            cameraPreview.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="bi bi-camera fa-3x mb-2"></i>
+                    <p class="mb-0">Fotoğraf çekmek için tıklayın</p>
+                    <small class="text-muted">Kamera ile canlı fotoğraf çekimi</small>
+                </div>
+            `;
+        }
     }
 
     // Cleanup when page unloads

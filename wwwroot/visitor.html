@@ -105,7 +105,7 @@
                             <div class="mb-3">
                                 <label for="residentPhone" class="form-label">Daire Sahibi Telefon Numarası *</label>
                                 <div class="input-group">
-                                    <input type="tel" class="form-control" id="residentPhone" placeholder="0 (5XX) XXX XX XX" readonly required>
+                                    <input type="tel" class="form-control" id="residentPhone" placeholder="(5XX) XXX XX XX" readonly required>
                                     <button class="btn btn-outline-success" type="button" id="callBtn" disabled>
                                         <i class="bi bi-telephone"></i> Ara
                                     </button>
@@ -126,7 +126,7 @@
                             <div class="mb-3">
                                 <label for="visitorPhone" class="form-label">Ziyaretçi Telefon Numarası</label>
                                 <div class="input-group">
-                                    <input type="tel" class="form-control" id="visitorPhone" placeholder="0 (5XX) XXX XX XX">
+                                    <input type="tel" class="form-control" id="visitorPhone" placeholder="(5XX) XXX XX XX">
                                     <button class="btn btn-outline-info" type="button" id="sendSmsBtn">
                                         <i class="bi bi-chat-dots"></i> SMS
                                     </button>
@@ -168,15 +168,14 @@
                             <div class="mb-3">
                                 <label class="form-label">Fotoğraf</label>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <button type="button" class="btn btn-outline-primary w-100 mb-2" id="captureBtn">
-                                            <i class="bi bi-camera"></i> Fotoğraf Çek
-                                        </button>
-                                        <input type="file" class="form-control" id="photoFile" accept="image/*" capture="camera">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div id="photoPreview" class="text-center">
-                                            <img id="previewImage" class="img-thumbnail d-none" style="max-height: 150px;">
+                                    <div class="col-md-12">
+                                        <!-- Camera Preview Area (Click to Open) -->
+                                        <div class="camera-preview" id="cameraPreview">
+                                            <div class="text-center text-muted">
+                                                <i class="bi bi-camera fa-3x mb-2"></i>
+                                                <p class="mb-0">Fotoğraf çekmek için tıklayın</p>
+                                                <small class="text-muted">Kamera ile canlı fotoğraf çekimi</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -285,10 +284,16 @@
                             <span id="cameraErrorMessage">Kamera erişim hatası</span>
                         </div>
                     </div>
+                    <div class="mt-3">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-hand-index me-1"></i>
+                            Fotoğraf çekmek için video ekranına tıklayın
+                        </p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelCameraBtn">İptal</button>
-                    <button type="button" class="btn btn-primary" id="takePictureBtn" disabled>
+                    <button type="button" class="btn btn-outline-primary" id="takePictureBtn" disabled>
                         <i class="bi bi-camera"></i> Fotoğraf Çek
                     </button>
                 </div>
