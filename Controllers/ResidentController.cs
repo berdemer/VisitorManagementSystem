@@ -69,6 +69,7 @@ namespace VisitorManagementSystem.Controllers
         }
 
         [HttpPost("search")]
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResidentDto>> SearchResidents([FromBody] ResidentSearchDto searchDto)
         {
             try
@@ -143,6 +144,7 @@ namespace VisitorManagementSystem.Controllers
         }
 
         [HttpGet("apartment/{apartmentNumber}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResidentDto>> GetResidentByApartment(string apartmentNumber)
         {
             try

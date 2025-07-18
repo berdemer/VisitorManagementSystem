@@ -94,13 +94,22 @@
                             <!-- Daire Sahibi -->
                             <div class="mb-3">
                                 <label for="residentName" class="form-label">Daire Sahibi Adı Soyadı *</label>
-                                <input type="text" class="form-control" id="residentName" required>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" id="residentName" placeholder="Ad soyad yazın veya yukarıdan daire seçin" required>
+                                    <div id="residentSuggestions" class="position-absolute w-100 bg-white border rounded shadow-sm d-none" style="z-index: 1000; max-height: 200px; overflow-y: auto;">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Daire Sahibi Telefon -->
                             <div class="mb-3">
                                 <label for="residentPhone" class="form-label">Daire Sahibi Telefon Numarası *</label>
-                                <input type="tel" class="form-control" id="residentPhone" placeholder="05XX XXX XX XX" required>
+                                <div class="input-group">
+                                    <input type="tel" class="form-control" id="residentPhone" placeholder="05XX XXX XX XX" readonly required>
+                                    <button class="btn btn-outline-success" type="button" id="callBtn" disabled>
+                                        <i class="bi bi-telephone"></i> Ara
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Ziyaretçi Adı Soyadı -->

@@ -13,6 +13,7 @@ class VisitorApp {
         this.bindEvents();
         this.loadActiveVisitors();
         this.startAutoRefresh();
+        this.initResidentFeatures();
     }
 
     checkAuth() {
@@ -200,6 +201,14 @@ class VisitorApp {
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.logout();
+            });
+        }
+
+        // Call button
+        const callBtn = document.getElementById('callBtn');
+        if (callBtn) {
+            callBtn.addEventListener('click', () => {
+                this.makePhoneCall();
             });
         }
 
@@ -551,6 +560,230 @@ class VisitorApp {
             case 'Manager': return 'Yönetici';
             case 'Security': return 'Güvenlik';
             default: return role || 'Kullanıcı';
+        }
+    }
+
+    initResidentFeatures() {
+        // Apartment selection change handlers
+        const blockSelect = document.getElementById('blockSelect');
+        const subBlockSelect = document.getElementById('subBlockSelect');
+        const apartmentNumber = document.getElementById('apartmentNumber');
+        const residentName = document.getElementById('residentName');
+        
+        if (blockSelect) {
+            blockSelect.addEventListener('change', () => this.onApartmentChange());
+        }
+        if (subBlockSelect) {
+            subBlockSelect.addEventListener('change', () => this.onApartmentChange());
+        }
+        if (apartmentNumber) {
+            apartmentNumber.addEventListener('input', () => this.onApartmentChange());
+        }
+        
+        // Resident name autocomplete
+        if (residentName) {
+            residentName.addEventListener('input', (e) => this.onResidentNameInput(e));
+            residentName.addEventListener('focus', () => this.showResidentSuggestions());
+            residentName.addEventListener('blur', () => {
+                // Hide suggestions after a short delay to allow clicking
+                setTimeout(() => this.hideResidentSuggestions(), 200);
+            });
+        }
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            const suggestions = document.getElementById('residentSuggestions');
+            const residentNameInput = document.getElementById('residentName');
+            if (suggestions && residentNameInput && 
+                !suggestions.contains(e.target) && 
+                !residentNameInput.contains(e.target)) {
+                this.hideResidentSuggestions();
+            }
+        });
+    }
+
+    async onApartmentChange() {
+        const blockSelect = this.getInputValue('blockSelect');
+        const subBlockSelect = this.getInputValue('subBlockSelect');
+        const apartmentNumber = this.getInputValue('apartmentNumber');
+        
+        if (blockSelect && subBlockSelect && apartmentNumber) {
+            const fullApartmentNumber = `${blockSelect}${subBlockSelect}-${apartmentNumber}`;
+            await this.loadResidentByApartment(fullApartmentNumber);
+        } else {
+            this.clearResidentInfo();
+        }
+    }
+
+    async loadResidentByApartment(apartmentNumber) {
+        try {
+            const response = await this.apiCall(`/resident/apartment/${encodeURIComponent(apartmentNumber)}`);
+            
+            if (response.ok) {
+                const resident = await response.json();
+                this.populateResidentInfo(resident);
+            } else {
+                this.clearResidentInfo();
+            }
+        } catch (error) {
+            console.error('Error loading resident:', error);
+            this.clearResidentInfo();
+        }
+    }
+
+    populateResidentInfo(resident) {
+        const residentNameInput = document.getElementById('residentName');
+        const residentPhoneInput = document.getElementById('residentPhone');
+        const callBtn = document.getElementById('callBtn');
+        
+        if (residentNameInput) {
+            residentNameInput.value = resident.fullName;
+        }
+        
+        // Get the highest priority phone contact
+        const phoneContact = resident.contacts && resident.contacts.length > 0 
+            ? resident.contacts
+                .filter(c => c.contactType === 'Phone' && c.isActive)
+                .sort((a, b) => a.priority - b.priority)[0]
+            : null;
+        
+        if (residentPhoneInput) {
+            residentPhoneInput.value = phoneContact ? phoneContact.contactValue : '';
+        }
+        
+        if (callBtn) {
+            callBtn.disabled = !phoneContact;
+        }
+        
+        this.hideResidentSuggestions();
+    }
+
+    clearResidentInfo() {
+        const residentNameInput = document.getElementById('residentName');
+        const residentPhoneInput = document.getElementById('residentPhone');
+        const callBtn = document.getElementById('callBtn');
+        
+        if (residentNameInput && !residentNameInput.value.trim()) {
+            residentNameInput.value = '';
+        }
+        
+        if (residentPhoneInput) {
+            residentPhoneInput.value = '';
+        }
+        
+        if (callBtn) {
+            callBtn.disabled = true;
+        }
+    }
+
+    async onResidentNameInput(e) {
+        const searchTerm = e.target.value.trim();
+        
+        if (searchTerm.length < 2) {
+            this.hideResidentSuggestions();
+            return;
+        }
+        
+        try {
+            const response = await this.apiCall('/resident/search', 'POST', {
+                searchTerm: searchTerm,
+                page: 1,
+                pageSize: 10
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                this.showResidentSuggestions(result.residents || []);
+            } else {
+                this.hideResidentSuggestions();
+            }
+        } catch (error) {
+            console.error('Error searching residents:', error);
+            this.hideResidentSuggestions();
+        }
+    }
+
+    showResidentSuggestions(residents = []) {
+        const suggestionsContainer = document.getElementById('residentSuggestions');
+        if (!suggestionsContainer) return;
+        
+        if (residents.length === 0) {
+            this.hideResidentSuggestions();
+            return;
+        }
+        
+        const suggestionsHtml = residents.map(resident => {
+            const phoneContact = resident.contacts && resident.contacts.length > 0 
+                ? resident.contacts
+                    .filter(c => c.contactType === 'Phone' && c.isActive)
+                    .sort((a, b) => a.priority - b.priority)[0]
+                : null;
+            
+            return `
+                <div class="suggestion-item p-2 border-bottom cursor-pointer" 
+                     onclick="app.selectResident(${resident.id}, '${this.escapeHtml(resident.fullName)}', '${resident.apartmentNumber}', '${phoneContact ? phoneContact.contactValue : ''}')">
+                    <div class="fw-bold">${this.escapeHtml(resident.fullName)}</div>
+                    <div class="text-muted small">
+                        <i class="bi bi-building"></i> ${this.escapeHtml(resident.apartmentNumber)}
+                        ${phoneContact ? `<i class="bi bi-telephone ms-2"></i> ${this.escapeHtml(phoneContact.contactValue)}` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        suggestionsContainer.innerHTML = suggestionsHtml;
+        suggestionsContainer.classList.remove('d-none');
+    }
+
+    hideResidentSuggestions() {
+        const suggestionsContainer = document.getElementById('residentSuggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.classList.add('d-none');
+        }
+    }
+
+    selectResident(residentId, fullName, apartmentNumber, phoneNumber) {
+        // Parse apartment number to fill form fields
+        const apartmentMatch = apartmentNumber.match(/^([A-Z]+)(\d+)-(\d+)$/);
+        if (apartmentMatch) {
+            const [, block, subBlock, doorNumber] = apartmentMatch;
+            
+            const blockSelect = document.getElementById('blockSelect');
+            const subBlockSelect = document.getElementById('subBlockSelect');
+            const apartmentInput = document.getElementById('apartmentNumber');
+            
+            if (blockSelect) blockSelect.value = block;
+            if (subBlockSelect) subBlockSelect.value = subBlock;
+            if (apartmentInput) apartmentInput.value = doorNumber;
+        }
+        
+        // Fill resident info
+        const residentNameInput = document.getElementById('residentName');
+        const residentPhoneInput = document.getElementById('residentPhone');
+        const callBtn = document.getElementById('callBtn');
+        
+        if (residentNameInput) {
+            residentNameInput.value = fullName;
+        }
+        
+        if (residentPhoneInput) {
+            residentPhoneInput.value = phoneNumber;
+        }
+        
+        if (callBtn) {
+            callBtn.disabled = !phoneNumber;
+        }
+        
+        this.hideResidentSuggestions();
+    }
+
+    makePhoneCall() {
+        const phoneNumber = this.getInputValue('residentPhone');
+        if (phoneNumber) {
+            // Format phone number for tel: protocol
+            const cleanPhone = phoneNumber.replace(/\D/g, '');
+            const formattedPhone = cleanPhone.startsWith('0') ? `+90${cleanPhone.substring(1)}` : `+90${cleanPhone}`;
+            window.open(`tel:${formattedPhone}`);
         }
     }
 

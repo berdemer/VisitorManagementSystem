@@ -363,6 +363,67 @@ input[type="file"]:hover {
     border-top: 1px solid #e9ecef;
 }
 
+/* Resident suggestions dropdown */
+#residentSuggestions {
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.suggestion-item .fw-bold {
+    color: var(--dark-color);
+    font-size: 0.95rem;
+}
+
+.suggestion-item .text-muted {
+    color: #6c757d !important;
+    font-size: 0.85rem;
+}
+
+.suggestion-item .text-muted i {
+    width: 16px;
+    margin-right: 4px;
+    color: var(--primary-color);
+}
+
+/* Call button styling */
+#callBtn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    font-weight: 600;
+}
+
+#callBtn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #20c997, #28a745);
+    transform: translateY(-1px);
+}
+
+#callBtn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
 /* Responsive utilities */
 .hide-mobile {
     display: block;
@@ -381,5 +442,13 @@ input[type="file"]:hover {
         min-width: 180px;
         right: 0;
         left: auto;
+    }
+    
+    #residentSuggestions {
+        max-height: 150px;
+    }
+    
+    .suggestion-item {
+        padding: 10px;
     }
 }

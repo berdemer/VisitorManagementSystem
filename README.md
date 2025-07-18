@@ -130,17 +130,25 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 
 ### Ziyaretçi Kaydı
 1. `visitor.html` sayfasından "Ziyaretçi Kaydı" sekmesini seçin
-2. **Zorunlu bilgileri girin:**
-   - Ana Blok/Alt Blok/Daire No
-   - Daire Sahibi Adı Soyadı
-   - Daire Sahibi Telefon Numarası
-   - Ziyaretçi Adı Soyadı
-3. **İsteğe bağlı bilgiler:**
-   - Ziyaretçi Telefon Numarası
-   - Araç Plakası
-   - Ziyaret Nedeni
-   - Fotoğraf
-4. "Ziyaretçi Kaydı Yap" butonuna tıklayın
+2. **Akıllı daire seçimi (YENİ!):**
+   - Ana Blok (dropdown): A, B, C, D, E, F
+   - Alt Blok (dropdown): 1, 2, 3, 4, 5, 6, 7, 8
+   - Daire No: Rakam girin
+   - **Otomatik doldurma**: Daire bilgileri girilince daire sahibi adı ve telefonu otomatik gelir
+3. **Alternatif: Ad soyad arama (YENİ!):**
+   - Daire Sahibi Adı alanına yazmaya başlayın (2+ karakter)
+   - Canlı öneriler listesinden seçim yapın
+   - **Otomatik doldurma**: Seçim yapılınca daire bilgileri ve telefon otomatik gelir
+4. **Telefon arama (YENİ!):**
+   - Telefon numarası gelince 📞 "Ara" butonu aktif olur
+   - Tıklayarak doğrudan arama yapabilirsiniz
+5. **Diğer bilgiler:**
+   - Ziyaretçi Adı Soyadı (zorunlu)
+   - Ziyaretçi Telefon Numarası (isteğe bağlı)
+   - Araç Plakası (isteğe bağlı)
+   - Ziyaret Nedeni (isteğe bağlı)
+   - Fotoğraf (isteğe bağlı)
+6. "Ziyaretçi Kaydı Yap" butonuna tıklayın
 
 ### Aktif Ziyaretçi Takibi
 1. "Aktif Ziyaretçiler" sekmesinde tüm aktif ziyaretçileri görün
@@ -200,10 +208,11 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 ### Daire Sahipleri İşlemleri
 - `GET /api/resident` - Daire sahiplerini listele (AUTH)
 - `GET /api/resident/{id}` - Daire sahibi detayı (AUTH)
+- `GET /api/resident/apartment/{apartmentNumber}` - **Daire ile sakin arama (PUBLIC)** 🆕
+- `POST /api/resident/search` - **Daire sahibi arama/autocomplete (PUBLIC)** 🆕
 - `POST /api/resident` - Yeni daire sahibi ekle (ADMIN)
 - `PUT /api/resident/{id}` - Daire sahibi güncelle (ADMIN)
 - `DELETE /api/resident/{id}` - Daire sahibi sil (ADMIN)
-- `POST /api/resident/search` - Daire sahibi arama (AUTH)
 - `GET /api/resident/search/license/{plate}` - Plaka ile arama (AUTH)
 - `POST /api/resident/import` - Excel içe aktarma (ADMIN)
 - `GET /api/resident/export` - Excel dışa aktarma (ADMIN)
@@ -249,9 +258,17 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **SMTP**: Id, SenderName, SenderEmail, SmtpServer, Port, Username, Password
 - **Güvenlik**: SecurityType, IsActive, CreatedAt, UpdatedAt
 
-## Yeni Özellikler (v2.0)
+## Yeni Özellikler (v2.2)
 
-### ✨ Güncellemeler
+### 🚀 Son Güncellemeler (v2.2)
+- **🏢 Akıllı Daire Sistemi**: Daire seçimi ile otomatik daire sahibi bilgisi getirme
+- **🔍 Canlı Arama**: Ad soyad ile autocomplete özelliği (2+ karakter ile aktif)
+- **📞 Telefon Entegrasyonu**: Daire sahibini doğrudan arama butonu (tel: protokolü)
+- **↔️ İki Yönlü Bağlama**: Daire no veya ad soyad girilince diğerleri otomatik doldurulur
+- **🎯 Hızlı Erişim**: Admin dropdown menü (Ziyaretçi sayfası + Çıkış)
+- **🔐 API Güvenlik**: Ziyaretçi kaydı için anonymous endpoint'ler
+
+### ✨ Önceki Güncellemeler (v2.0-2.1)
 - **Mobil Interface**: Tab-based navigation (Ziyaretçi Kaydı / Aktif Ziyaretçiler)
 - **Detaylı Bilgi Toplama**: Daire sahibi adı ve ziyaretçi telefonu eklendi
 - **Gelişmiş UI**: Bootstrap 5 ile responsive tasarım
@@ -327,8 +344,8 @@ Bu proje özel kullanım için geliştirilmiştir.
 
 ---
 
-**Versiyon**: 2.1  
-**Son Güncelleme**: 2025-07-17  
+**Versiyon**: 2.2  
+**Son Güncelleme**: 2025-07-18  
 **Geliştirici**: Claude Code Assistant
 
 ## Sistem Durumu
@@ -341,6 +358,10 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **Mail Sistemi**: Yapılandırılabilir
 ✅ **Daire Sahipleri Modülü**: Aktif
 ✅ **Merkezi Şifre Yönetimi**: Aktif
+✅ **🆕 Akıllı Daire Sistemi**: Aktif
+✅ **🆕 Autocomplete Arama**: Aktif  
+✅ **🆕 Telefon Entegrasyonu**: Aktif
+✅ **🆕 Admin Dropdown**: Aktif
 
 ### Çalıştırma Komutu
 ```bash
@@ -351,3 +372,25 @@ dotnet run --launch-profile http
 - **Giriş**: http://localhost:5002/login.html
 - **Ziyaretçi Kaydı**: http://localhost:5002/visitor.html
 - **Admin Panel**: http://localhost:5002/admin.html
+
+### 🎯 Yeni Özellikler Test Rehberi
+
+#### Akıllı Daire Sistemi Test:
+1. **http://localhost:5002/visitor.html** adresini açın
+2. Ana Blok: **B** seçin
+3. Alt Blok: **4** seçin  
+4. Daire No: **10** yazın
+5. **Otomatik**: Daire sahibi "Özlem Erdem" ve telefon "5057073802" gelecek
+6. **📞 Ara butonu** aktif hale gelecek
+
+#### Autocomplete Arama Test:
+1. **Daire Sahibi Adı** alanını temizleyin
+2. **"Özlem"** yazmaya başlayın
+3. **Canlı öneriler** görünecek
+4. Listeden seçim yapın
+5. **Otomatik**: Tüm bilgiler (daire no, telefon) dolacak
+
+#### Admin Dropdown Test:
+1. **http://localhost:5002/login.html** - admin/admin123 ile giriş yapın
+2. Admin panelinde kullanıcı adının yanında **dropdown oku** görünecek
+3. Dropdown açılınca **Ziyaretçi** ve **Çıkış** seçenekleri olacak
