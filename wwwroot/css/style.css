@@ -363,8 +363,9 @@ input[type="file"]:hover {
     border-top: 1px solid #e9ecef;
 }
 
-/* Resident suggestions dropdown */
-#residentSuggestions {
+/* Resident and Visitor suggestions dropdown */
+#residentSuggestions,
+#visitorSuggestions {
     top: 100%;
     left: 0;
     background: white;
@@ -424,6 +425,80 @@ input[type="file"]:hover {
     cursor: not-allowed;
 }
 
+/* Custom Modal Styling */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    opacity: 0.8;
+    filter: brightness(0) invert(1);
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 2rem;
+}
+
+.modal-footer .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+}
+
+/* Modal animations */
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+/* Custom modal button colors */
+.modal-footer .btn-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    border: none;
+}
+
+.modal-footer .btn-warning {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    border: none;
+    color: #212529;
+}
+
+.modal-footer .btn-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), #0056b3);
+    border: none;
+}
+
 /* Responsive utilities */
 .hide-mobile {
     display: block;
@@ -444,11 +519,84 @@ input[type="file"]:hover {
         left: auto;
     }
     
-    #residentSuggestions {
+    #residentSuggestions,
+    #visitorSuggestions {
         max-height: 150px;
     }
     
     .suggestion-item {
         padding: 10px;
     }
+}
+
+/* SMS Verification Button Styling */
+#sendSmsBtn {
+    background: linear-gradient(45deg, #17a2b8, #0dcaf0);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#sendSmsBtn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #0dcaf0, #17a2b8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+#sendSmsBtn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* SMS Code Display */
+#smsCodeDisplay {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 100px;
+    }
+}
+
+#smsCodeDisplay .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(13, 202, 240, 0.2);
+    background: linear-gradient(135deg, #d1ecf1, #b3e5fc);
+    color: #0c5460;
+    margin-bottom: 0;
+}
+
+#smsCodeValue {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* SMS verification alert icon */
+#smsCodeDisplay .bi-chat-square-text {
+    font-size: 1.2rem;
+    color: #0dcaf0;
 }

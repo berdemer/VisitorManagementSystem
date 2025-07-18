@@ -115,13 +115,33 @@
                             <!-- Ziyaretçi Adı Soyadı -->
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Ziyaretçi Adı Soyadı *</label>
-                                <input type="text" class="form-control" id="fullName" required>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" id="fullName" placeholder="Ziyaretçi adı yazın veya önceki kayıtlardan seçin" required>
+                                    <div id="visitorSuggestions" class="position-absolute w-100 bg-white border rounded shadow-sm d-none" style="z-index: 1000; max-height: 200px; overflow-y: auto;">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Ziyaretçi Telefon -->
                             <div class="mb-3">
                                 <label for="visitorPhone" class="form-label">Ziyaretçi Telefon Numarası</label>
-                                <input type="tel" class="form-control" id="visitorPhone" placeholder="05XX XXX XX XX">
+                                <div class="input-group">
+                                    <input type="tel" class="form-control" id="visitorPhone" placeholder="05XX XXX XX XX">
+                                    <button class="btn btn-outline-info" type="button" id="sendSmsBtn">
+                                        <i class="bi bi-chat-dots"></i> SMS Gönder
+                                    </button>
+                                </div>
+                                
+                                <!-- SMS Doğrulama Kodu Gösterimi -->
+                                <div id="smsCodeDisplay" class="mt-2 d-none">
+                                    <div class="alert alert-info d-flex align-items-center">
+                                        <i class="bi bi-chat-square-text me-2"></i>
+                                        <div>
+                                            <strong>📤 Ziyaretçiye gönderilen kod:</strong> 
+                                            <span id="smsCodeValue" class="badge bg-primary fs-6 ms-2">000</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Araç Plakası -->
@@ -214,6 +234,28 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
             <div class="toast-body" id="errorToastBody"></div>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span id="customModalTitle">Bilgi</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="customModalMessage">Modal mesajı burada görünecek.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="customModalCancelBtn">İptal</button>
+                    <button type="button" class="btn btn-primary" id="customModalConfirmBtn">Tamam</button>
+                </div>
+            </div>
         </div>
     </div>
 

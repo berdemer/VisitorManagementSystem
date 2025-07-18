@@ -67,6 +67,38 @@ namespace VisitorManagementSystem.Controllers
             return Ok(visitors);
         }
 
+        [HttpGet("search/{name}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<object>>> SearchVisitorsByName(string name)
+        {
+            try
+            {
+                var visitors = await _visitorService.SearchVisitorsByNameAsync(name);
+                
+                // Return unique visitors with their contact info
+                var uniqueVisitors = visitors
+                    .GroupBy(v => new { v.FullName, v.VisitorPhone, v.LicensePlate })
+                    .Select(g => new
+                    {
+                        fullName = g.Key.FullName,
+                        visitorPhone = g.Key.VisitorPhone,
+                        licensePlate = g.Key.LicensePlate,
+                        visitCount = g.Count(),
+                        lastVisit = g.Max(v => v.CheckInTime)
+                    })
+                    .OrderByDescending(v => v.lastVisit)
+                    .Take(10)
+                    .ToList();
+
+                return Ok(uniqueVisitors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching visitors by name {Name}", name);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Visitor>> GetVisitor(int id)
         {

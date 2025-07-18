@@ -20,6 +20,9 @@ namespace VisitorManagementSystem.Services
         // Pagination methods
         Task<PagedVisitorDto> GetVisitorsPagedAsync(int page = 1, int pageSize = 10);
         Task<PagedVisitorDto> SearchVisitorsAsync(VisitorSearchDto searchDto);
+        
+        // Search visitors by name for autocomplete
+        Task<IEnumerable<Visitor>> SearchVisitorsByNameAsync(string name);
     }
 
     public class ApartmentVisitStatDto

@@ -212,6 +212,14 @@ class VisitorApp {
             });
         }
 
+        // SMS button
+        const sendSmsBtn = document.getElementById('sendSmsBtn');
+        if (sendSmsBtn) {
+            sendSmsBtn.addEventListener('click', () => {
+                this.sendSmsVerification();
+            });
+        }
+
     }
 
     async createVisitor() {
@@ -228,22 +236,22 @@ class VisitorApp {
 
         // Validate required fields
         if (!blockSelect || !subBlockSelect || !apartmentNumber) {
-            this.showError('Ana Blok, Alt Blok ve Daire No zorunludur');
+            await this.showAlert('Eksik Bilgi', 'Ana Blok, Alt Blok ve Daire No zorunludur', 'warning');
             return;
         }
 
         if (!residentName) {
-            this.showError('Daire sahibi adı zorunludur');
+            await this.showAlert('Eksik Bilgi', 'Daire sahibi adı zorunludur', 'warning');
             return;
         }
 
         if (!residentPhone) {
-            this.showError('Daire sahibi telefon numarası zorunludur');
+            await this.showAlert('Eksik Bilgi', 'Daire sahibi telefon numarası zorunludur', 'warning');
             return;
         }
 
         if (!fullName) {
-            this.showError('Ziyaretçi adı soyadı zorunludur');
+            await this.showAlert('Eksik Bilgi', 'Ziyaretçi adı soyadı zorunludur', 'warning');
             return;
         }
 
@@ -273,16 +281,17 @@ class VisitorApp {
                     await this.uploadPhoto(visitor.id, photoFile.files[0]);
                 }
 
-                this.showSuccess('Ziyaretçi kaydı başarıyla oluşturuldu');
                 this.resetForm();
                 this.loadActiveVisitors();
+                // Toast notification for success instead of modal
+                this.showSuccess('Ziyaretçi kaydı başarıyla oluşturuldu');
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                this.showError(errorData.message || 'Ziyaretçi kaydı oluşturulamadı');
+                await this.showAlert('Hata', errorData.message || 'Ziyaretçi kaydı oluşturulamadı', 'error');
             }
         } catch (error) {
             console.error('Create visitor error:', error);
-            this.showError('Kayıt işlemi sırasında hata oluştu');
+            await this.showAlert('Hata', 'Kayıt işlemi sırasında hata oluştu', 'error');
         }
     }
 
@@ -376,11 +385,16 @@ class VisitorApp {
 
     async checkoutVisitor(visitorId) {
         if (!this.token) {
-            this.showError('Bu işlem için giriş yapmanız gerekir');
+            await this.showAlert('Yetki Hatası', 'Bu işlem için giriş yapmanız gerekir', 'error');
             return;
         }
 
-        if (!confirm('Bu ziyaretçiyi çıkış yaptırmak istediğinizden emin misiniz?')) {
+        const confirmed = await this.showConfirm(
+            'Ziyaretçi Çıkışı', 
+            'Bu ziyaretçiyi çıkış yaptırmak istediğinizden emin misiniz?'
+        );
+
+        if (!confirmed) {
             return;
         }
 
@@ -388,14 +402,15 @@ class VisitorApp {
             const response = await this.apiCall(`/visitor/${visitorId}/checkout`, 'POST');
 
             if (response.ok) {
-                this.showSuccess('Ziyaretçi çıkışı başarıyla kaydedildi');
                 this.loadActiveVisitors();
+                // Toast notification for success instead of modal
+                this.showSuccess('Ziyaretçi çıkışı başarıyla kaydedildi');
             } else {
-                this.showError('Çıkış işlemi başarısız');
+                await this.showAlert('Hata', 'Çıkış işlemi başarısız', 'error');
             }
         } catch (error) {
             console.error('Checkout error:', error);
-            this.showError('Çıkış işlemi sırasında hata oluştu');
+            await this.showAlert('Hata', 'Çıkış işlemi sırasında hata oluştu', 'error');
         }
     }
 
@@ -544,6 +559,94 @@ class VisitorApp {
         }
     }
 
+    // Custom Modal Methods
+    showModal(title, message, type = 'info', showCancel = false) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('customModalTitle');
+            const modalMessage = document.getElementById('customModalMessage');
+            const modalIcon = document.querySelector('#customModalLabel i');
+            const confirmBtn = document.getElementById('customModalConfirmBtn');
+            const cancelBtn = document.getElementById('customModalCancelBtn');
+            
+            if (!modal) {
+                alert(message);
+                resolve(false);
+                return;
+            }
+            
+            // Set content
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            
+            // Set icon and button styles based on type
+            switch (type) {
+                case 'error':
+                    modalIcon.className = 'bi bi-exclamation-triangle text-danger me-2';
+                    confirmBtn.className = 'btn btn-danger';
+                    break;
+                case 'warning':
+                    modalIcon.className = 'bi bi-exclamation-triangle text-warning me-2';
+                    confirmBtn.className = 'btn btn-warning';
+                    break;
+                case 'success':
+                    modalIcon.className = 'bi bi-check-circle text-success me-2';
+                    confirmBtn.className = 'btn btn-success';
+                    break;
+                default:
+                    modalIcon.className = 'bi bi-info-circle text-primary me-2';
+                    confirmBtn.className = 'btn btn-primary';
+            }
+            
+            // Show/hide cancel button
+            if (showCancel) {
+                cancelBtn.style.display = 'block';
+                confirmBtn.textContent = 'Tamam';
+            } else {
+                cancelBtn.style.display = 'none';
+                confirmBtn.textContent = 'Tamam';
+            }
+            
+            // Handle button clicks
+            const handleConfirm = () => {
+                resolve(true);
+                bootstrap.Modal.getInstance(modal).hide();
+                confirmBtn.removeEventListener('click', handleConfirm);
+                cancelBtn.removeEventListener('click', handleCancel);
+            };
+            
+            const handleCancel = () => {
+                resolve(false);
+                bootstrap.Modal.getInstance(modal).hide();
+                confirmBtn.removeEventListener('click', handleConfirm);
+                cancelBtn.removeEventListener('click', handleCancel);
+            };
+            
+            confirmBtn.addEventListener('click', handleConfirm);
+            cancelBtn.addEventListener('click', handleCancel);
+            
+            // Handle modal close
+            modal.addEventListener('hidden.bs.modal', () => {
+                resolve(false);
+                confirmBtn.removeEventListener('click', handleConfirm);
+                cancelBtn.removeEventListener('click', handleCancel);
+            }, { once: true });
+            
+            // Show modal
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        });
+    }
+
+    // Convenience methods
+    async showConfirm(title, message) {
+        return await this.showModal(title, message, 'warning', true);
+    }
+
+    async showAlert(title, message, type = 'info') {
+        return await this.showModal(title, message, type, false);
+    }
+
 
 
 
@@ -589,15 +692,35 @@ class VisitorApp {
                 setTimeout(() => this.hideResidentSuggestions(), 200);
             });
         }
+
+        // Visitor name autocomplete
+        const visitorName = document.getElementById('fullName');
+        if (visitorName) {
+            visitorName.addEventListener('input', (e) => this.onVisitorNameInput(e));
+            visitorName.addEventListener('focus', () => this.showVisitorSuggestions());
+            visitorName.addEventListener('blur', () => {
+                // Hide suggestions after a short delay to allow clicking
+                setTimeout(() => this.hideVisitorSuggestions(), 200);
+            });
+        }
         
         // Hide suggestions when clicking outside
         document.addEventListener('click', (e) => {
-            const suggestions = document.getElementById('residentSuggestions');
+            const residentSuggestions = document.getElementById('residentSuggestions');
             const residentNameInput = document.getElementById('residentName');
-            if (suggestions && residentNameInput && 
-                !suggestions.contains(e.target) && 
+            const visitorSuggestions = document.getElementById('visitorSuggestions');
+            const visitorNameInput = document.getElementById('fullName');
+            
+            if (residentSuggestions && residentNameInput && 
+                !residentSuggestions.contains(e.target) && 
                 !residentNameInput.contains(e.target)) {
                 this.hideResidentSuggestions();
+            }
+            
+            if (visitorSuggestions && visitorNameInput && 
+                !visitorSuggestions.contains(e.target) && 
+                !visitorNameInput.contains(e.target)) {
+                this.hideVisitorSuggestions();
             }
         });
     }
@@ -777,6 +900,85 @@ class VisitorApp {
         this.hideResidentSuggestions();
     }
 
+    async onVisitorNameInput(e) {
+        const searchTerm = e.target.value.trim();
+        
+        if (searchTerm.length < 2) {
+            this.hideVisitorSuggestions();
+            return;
+        }
+        
+        try {
+            const response = await this.apiCall(`/visitor/search/${encodeURIComponent(searchTerm)}`);
+            
+            if (response.ok) {
+                const visitors = await response.json();
+                this.showVisitorSuggestions(visitors || []);
+            } else {
+                this.hideVisitorSuggestions();
+            }
+        } catch (error) {
+            console.error('Error searching visitors:', error);
+            this.hideVisitorSuggestions();
+        }
+    }
+
+    showVisitorSuggestions(visitors = []) {
+        const suggestionsContainer = document.getElementById('visitorSuggestions');
+        if (!suggestionsContainer) return;
+        
+        if (visitors.length === 0) {
+            this.hideVisitorSuggestions();
+            return;
+        }
+        
+        const suggestionsHtml = visitors.map(visitor => {
+            return `
+                <div class="suggestion-item p-2 border-bottom cursor-pointer" 
+                     onclick="app.selectVisitor('${this.escapeHtml(visitor.fullName)}', '${visitor.visitorPhone || ''}', '${visitor.licensePlate || ''}')"
+                     style="cursor: pointer;">
+                    <div class="fw-bold">${this.escapeHtml(visitor.fullName)}</div>
+                    <div class="text-muted small">
+                        ${visitor.visitorPhone ? `<i class="bi bi-telephone"></i> ${this.escapeHtml(visitor.visitorPhone)}` : ''}
+                        ${visitor.licensePlate ? `<i class="bi bi-car-front ms-2"></i> ${this.escapeHtml(visitor.licensePlate)}` : ''}
+                        ${visitor.visitCount ? `<span class="badge bg-secondary ms-2">${visitor.visitCount} ziyaret</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        suggestionsContainer.innerHTML = suggestionsHtml;
+        suggestionsContainer.classList.remove('d-none');
+    }
+
+    hideVisitorSuggestions() {
+        const suggestionsContainer = document.getElementById('visitorSuggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.classList.add('d-none');
+        }
+    }
+
+    selectVisitor(fullName, visitorPhone, licensePlate) {
+        // Fill visitor info
+        const visitorNameInput = document.getElementById('fullName');
+        const visitorPhoneInput = document.getElementById('visitorPhone');
+        const licensePlateInput = document.getElementById('licensePlate');
+        
+        if (visitorNameInput) {
+            visitorNameInput.value = fullName;
+        }
+        
+        if (visitorPhoneInput && visitorPhone) {
+            visitorPhoneInput.value = visitorPhone;
+        }
+        
+        if (licensePlateInput && licensePlate) {
+            licensePlateInput.value = licensePlate;
+        }
+        
+        this.hideVisitorSuggestions();
+    }
+
     makePhoneCall() {
         const phoneNumber = this.getInputValue('residentPhone');
         if (phoneNumber) {
@@ -784,6 +986,62 @@ class VisitorApp {
             const cleanPhone = phoneNumber.replace(/\D/g, '');
             const formattedPhone = cleanPhone.startsWith('0') ? `+90${cleanPhone.substring(1)}` : `+90${cleanPhone}`;
             window.open(`tel:${formattedPhone}`);
+        }
+    }
+
+    async sendSmsVerification() {
+        const phoneNumber = this.getInputValue('visitorPhone');
+        
+        if (!phoneNumber) {
+            await this.showAlert('Eksik Bilgi', 'Ziyaretçi telefon numarası gereklidir', 'warning');
+            return;
+        }
+        
+        const sendSmsBtn = document.getElementById('sendSmsBtn');
+        const smsCodeDisplay = document.getElementById('smsCodeDisplay');
+        const smsCodeValue = document.getElementById('smsCodeValue');
+        
+        // Disable button during request
+        if (sendSmsBtn) {
+            sendSmsBtn.disabled = true;
+            sendSmsBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Gönderiliyor...';
+        }
+        
+        try {
+            const response = await this.apiCall('/smsverification/send', 'POST', {
+                phoneNumber: phoneNumber
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                
+                if (result.success && result.code) {
+                    // Show the SMS code
+                    if (smsCodeValue) {
+                        smsCodeValue.textContent = result.code;
+                    }
+                    
+                    if (smsCodeDisplay) {
+                        smsCodeDisplay.classList.remove('d-none');
+                    }
+                    
+                    this.showToast('SMS gönderildi', 'success');
+                } else {
+                    await this.showAlert('Hata', result.message || 'SMS gönderilirken hata oluştu', 'error');
+                }
+            } else {
+                const errorResult = await response.json();
+                await this.showAlert('Hata', errorResult.message || 'SMS gönderilirken hata oluştu', 'error');
+            }
+        } catch (error) {
+            console.error('SMS sending error:', error);
+            await this.showAlert('Hata', 'SMS gönderilirken hata oluştu', 'error');
+        } finally {
+            // Re-enable button
+            if (sendSmsBtn) {
+                sendSmsBtn.disabled = false;
+                sendSmsBtn.innerHTML = '<i class="bi bi-chat-dots"></i> SMS Gönder';
+            }
         }
     }
 

@@ -39,7 +39,7 @@ namespace VisitorManagementSystem.Services
             }
         }
 
-        private async Task<bool> SendSmsAsync(string phoneNumber, string message)
+        public async Task<bool> SendSmsAsync(string phoneNumber, string message)
         {
             // SMS API integration placeholder
             // Replace with actual SMS provider (Twilio, MessageBird, etc.)

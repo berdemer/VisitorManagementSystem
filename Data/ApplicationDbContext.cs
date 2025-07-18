@@ -16,6 +16,7 @@ namespace VisitorManagementSystem.Data
         public DbSet<User> Users { get; set; }
         public DbSet<VisitorLog> VisitorLogs { get; set; }
         public DbSet<MailSettings> MailSettings { get; set; }
+        public DbSet<SmsVerification> SmsVerifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -124,6 +125,17 @@ namespace VisitorManagementSystem.Data
                 entity.Property(e => e.SecurityType).IsRequired().HasMaxLength(10);
                 entity.Property(e => e.CreatedBy).HasMaxLength(50);
                 entity.Property(e => e.UpdatedBy).HasMaxLength(50);
+            });
+
+            // SmsVerification configuration
+            modelBuilder.Entity<SmsVerification>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(15);
+                entity.Property(e => e.Code).IsRequired().HasMaxLength(3);
+                entity.Property(e => e.CreatedBy).HasMaxLength(50);
+                entity.HasIndex(e => e.PhoneNumber);
+                entity.HasIndex(e => e.CreatedAt);
             });
 
             // Seed data removed - handled dynamically in Program.cs

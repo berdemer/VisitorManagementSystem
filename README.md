@@ -142,13 +142,22 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 4. **Telefon arama (YENİ!):**
    - Telefon numarası gelince 📞 "Ara" butonu aktif olur
    - Tıklayarak doğrudan arama yapabilirsiniz
-5. **Diğer bilgiler:**
-   - Ziyaretçi Adı Soyadı (zorunlu)
-   - Ziyaretçi Telefon Numarası (isteğe bağlı)
+5. **Ziyaretçi bilgileri (YENİ! Autocomplete):**
+   - **Ziyaretçi Adı Soyadı**: Yazmaya başlayın (2+ karakter)
+   - **Akıllı öneriler**: Daha önce kayıtlı ziyaretçiler listesinden seçin
+   - **Otomatik doldurma**: Seçim yapılınca telefon ve plaka otomatik gelir
+   - **Ziyaret geçmişi**: Kaç kez ziyaret ettiği gösterilir
+6. **SMS Doğrulama Sistemi (YENİ! 🆕):**
+   - **Ziyaretçi Telefon Numarası**: Telefon numarası girin
+   - **📱 SMS Gönder**: Butona tıklayarak doğrulama kodu gönderin
+   - **👀 Görsel Kod**: Gönderilen 3 haneli kod ekranda görünür
+   - **⏱️ Otomatik Süre**: 5 dakika geçerli, 1 dakika rate limiting
+   - **🔐 Güvenlik**: Ziyaretçi kodu güvenlik görevlisine gösterir
+7. **Diğer bilgiler:**
    - Araç Plakası (isteğe bağlı)
    - Ziyaret Nedeni (isteğe bağlı)
    - Fotoğraf (isteğe bağlı)
-6. "Ziyaretçi Kaydı Yap" butonuna tıklayın
+8. "Ziyaretçi Kaydı Yap" butonuna tıklayın
 
 ### Aktif Ziyaretçi Takibi
 1. "Aktif Ziyaretçiler" sekmesinde tüm aktif ziyaretçileri görün
@@ -194,6 +203,7 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 ### Ziyaretçi İşlemleri
 - `GET /api/visitor` - Tüm ziyaretçileri listele (AUTH)
 - `GET /api/visitor/active` - Aktif ziyaretçileri listele (PUBLIC)
+- `GET /api/visitor/search/{name}` - **Ziyaretçi adı arama/autocomplete (PUBLIC)** 🆕
 - `POST /api/visitor` - Yeni ziyaretçi kaydet (PUBLIC)
 - `POST /api/visitor/{id}/checkout` - Ziyaretçi çıkışı (AUTH)
 - `POST /api/visitor/upload-photo` - Fotoğraf yükle (PUBLIC)
@@ -216,6 +226,11 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - `GET /api/resident/search/license/{plate}` - Plaka ile arama (AUTH)
 - `POST /api/resident/import` - Excel içe aktarma (ADMIN)
 - `GET /api/resident/export` - Excel dışa aktarma (ADMIN)
+
+### SMS Doğrulama İşlemleri 🆕
+- `POST /api/smsverification/send` - **SMS doğrulama kodu gönder (PUBLIC)** 🆕
+- `POST /api/smsverification/verify` - **SMS kodunu doğrula (PUBLIC)** 🆕
+- `GET /api/smsverification/status/{phoneNumber}` - **SMS durum sorgula (PUBLIC)** 🆕
 
 ### Mail Sistemi İşlemleri
 - `GET /api/mailsettings` - Mail ayarlarını getir (ADMIN)
@@ -258,9 +273,26 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **SMTP**: Id, SenderName, SenderEmail, SmtpServer, Port, Username, Password
 - **Güvenlik**: SecurityType, IsActive, CreatedAt, UpdatedAt
 
-## Yeni Özellikler (v2.2)
+### SmsVerifications 🆕
+- **SMS**: Id, PhoneNumber, Code, CreatedAt, ExpiresAt
+- **Durum**: IsUsed, IsValid, IsExpired, CreatedBy
 
-### 🚀 Son Güncellemeler (v2.2)
+## Yeni Özellikler (v2.3)
+
+### 🚀 Son Güncellemeler (v2.4)
+- **📱 SMS Doğrulama Sistemi**: Ziyaretçi telefon numarası doğrulaması 🆕
+- **👀 Görsel Kod Gösterimi**: Güvenlik görevlisi ekranında SMS kodu görünür 🆕
+- **⏱️ Otomatik Süre Sınırı**: 5 dakika süre sınırı ve 1 dakika rate limiting 🆕
+- **🔐 3 Haneli Güvenlik**: Kolay hatırlanabilir 3 haneli doğrulama kodu 🆕
+- **✨ Profesyonel Tasarım**: Animasyonlu buton ve kod gösterimi 🆕
+
+### 🏢 Önceki Güncellemeler (v2.3)
+- **👥 Ziyaretçi Autocomplete**: Ziyaretçi adı alanında akıllı arama özelliği
+- **📱 Akıllı Seçim**: Ziyaretçi seçiminde telefon ve plaka otomatik doldurma
+- **📊 Ziyaret Geçmişi**: Ziyaret sayısı ve son ziyaret tarihi gösterimi
+- **🔄 Güncel Veriler**: En son ziyaret tarihine göre sıralanmış öneriler
+
+### 🏢 Önceki Güncellemeler (v2.2)
 - **🏢 Akıllı Daire Sistemi**: Daire seçimi ile otomatik daire sahibi bilgisi getirme
 - **🔍 Canlı Arama**: Ad soyad ile autocomplete özelliği (2+ karakter ile aktif)
 - **📞 Telefon Entegrasyonu**: Daire sahibini doğrudan arama butonu (tel: protokolü)
@@ -344,7 +376,7 @@ Bu proje özel kullanım için geliştirilmiştir.
 
 ---
 
-**Versiyon**: 2.2  
+**Versiyon**: 2.4  
 **Son Güncelleme**: 2025-07-18  
 **Geliştirici**: Claude Code Assistant
 
@@ -359,9 +391,11 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **Daire Sahipleri Modülü**: Aktif
 ✅ **Merkezi Şifre Yönetimi**: Aktif
 ✅ **🆕 Akıllı Daire Sistemi**: Aktif
-✅ **🆕 Autocomplete Arama**: Aktif  
+✅ **🆕 Daire Sahibi Autocomplete**: Aktif
+✅ **🆕 Ziyaretçi Autocomplete**: Aktif  
 ✅ **🆕 Telefon Entegrasyonu**: Aktif
 ✅ **🆕 Admin Dropdown**: Aktif
+✅ **🆕 SMS Doğrulama Sistemi**: Aktif
 
 ### Çalıştırma Komutu
 ```bash
@@ -383,14 +417,31 @@ dotnet run --launch-profile http
 5. **Otomatik**: Daire sahibi "Özlem Erdem" ve telefon "5057073802" gelecek
 6. **📞 Ara butonu** aktif hale gelecek
 
-#### Autocomplete Arama Test:
+#### Daire Sahibi Autocomplete Test:
 1. **Daire Sahibi Adı** alanını temizleyin
 2. **"Özlem"** yazmaya başlayın
 3. **Canlı öneriler** görünecek
 4. Listeden seçim yapın
 5. **Otomatik**: Tüm bilgiler (daire no, telefon) dolacak
 
+#### Ziyaretçi Autocomplete Test (YENİ! 🆕):
+1. **Ziyaretçi Adı Soyadı** alanına **"Ahmet"** yazın
+2. **Canlı öneriler** listesinde "Ahmet Yılmaz" görünecek
+3. **Ziyaret geçmişi**: "1 ziyaret" badge'i gösterilecek
+4. Listeden seçim yapın
+5. **Otomatik**: Telefon (5551234567) ve plaka (34ABC123) dolacak
+
 #### Admin Dropdown Test:
 1. **http://localhost:5002/login.html** - admin/admin123 ile giriş yapın
 2. Admin panelinde kullanıcı adının yanında **dropdown oku** görünecek
 3. Dropdown açılınca **Ziyaretçi** ve **Çıkış** seçenekleri olacak
+
+#### SMS Doğrulama Sistemi Test (YENİ! 🆕):
+1. **http://localhost:5002/visitor.html** adresini açın
+2. **Ziyaretçi Telefon Numarası** alanına **"5551234567"** girin
+3. **📱 SMS Gönder** butonuna tıklayın
+4. **👀 Görsel Kod**: Mavi renkli 3 haneli kod (örn: 456) ekranda görünecek
+5. **⏱️ Rate Limiting**: 1 dakika içinde tekrar gönderme engellenir
+6. **🔐 Güvenlik**: Ziyaretçi bu kodu güvenlik görevlisine gösterir
+7. **Animasyon**: Kod gösterimi slide-down animasyonu ile gelir
+8. **Otomatik Süre**: 5 dakika sonra kod geçersiz olur

@@ -9,7 +9,7 @@ using OfficeOpenXml;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure URLs
-builder.WebHost.UseUrls("http://localhost:5003");
+builder.WebHost.UseUrls("http://0.0.0.0:5002");
 
 // Configure EPPlus license and disable GDI+ completely on macOS
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -70,11 +70,11 @@ builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResidentService, ResidentService>();
 builder.Services.AddScoped<IMailSettingsService, MailSettingsService>();
+builder.Services.AddScoped<ISmsVerificationService, SmsVerificationService>();
 
 var app = builder.Build();
 
-// Kestrel server options
-app.Urls.Add("http://0.0.0.0:5002");
+// Kestrel server options (removed duplicate URL config - using WebHost.UseUrls above)
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

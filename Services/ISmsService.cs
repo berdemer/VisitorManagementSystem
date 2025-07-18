@@ -4,5 +4,6 @@ namespace VisitorManagementSystem.Services
     {
         Task<bool> SendVisitorNotificationAsync(string phoneNumber, string visitorName, string apartmentNumber);
         Task<bool> SendAlertAsync(string phoneNumber, string message);
+        Task<bool> SendSmsAsync(string phoneNumber, string message);
     }
 }

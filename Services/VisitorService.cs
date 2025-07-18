@@ -445,5 +445,35 @@ namespace VisitorManagementSystem.Services
                 CreatedBy = visitor.CreatedBy
             };
         }
+
+        public async Task<IEnumerable<Visitor>> SearchVisitorsByNameAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name) || name.Length < 2)
+                return new List<Visitor>();
+
+            // Use simpler LIKE search for database compatibility
+            var searchTerm = name.ToLowerInvariant();
+
+            return await _context.Visitors
+                .Where(v => EF.Functions.Like(v.FullName.ToLower(), $"%{searchTerm}%"))
+                .Where(v => !string.IsNullOrEmpty(v.FullName))
+                .OrderByDescending(v => v.CheckInTime)
+                .Take(20)
+                .ToListAsync();
+        }
+
+        private static string NormalizeTurkishChars(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input
+                .Replace('ç', 'c').Replace('Ç', 'C')
+                .Replace('ğ', 'g').Replace('Ğ', 'G')
+                .Replace('ı', 'i').Replace('I', 'I')
+                .Replace('ö', 'o').Replace('Ö', 'O')
+                .Replace('ş', 's').Replace('Ş', 'S')
+                .Replace('ü', 'u').Replace('Ü', 'U');
+        }
     }
 }
