@@ -176,21 +176,13 @@ class VisitorApp {
             });
         }
 
-        // Phone number formatting
+        // Phone number formatting with mask
         const phoneInputs = ['residentPhone', 'visitorPhone'];
         phoneInputs.forEach(inputId => {
             const phoneInput = document.getElementById(inputId);
             if (phoneInput) {
                 phoneInput.addEventListener('input', (e) => {
-                    // Remove all non-digits
-                    let value = e.target.value.replace(/\D/g, '');
-                    
-                    // Limit to 11 digits
-                    if (value.length > 11) {
-                        value = value.substring(0, 11);
-                    }
-                    
-                    e.target.value = value;
+                    this.formatPhoneNumber(e.target);
                 });
             }
         });
@@ -504,7 +496,14 @@ class VisitorApp {
 
     getInputValue(id) {
         const element = document.getElementById(id);
-        return element ? element.value.trim() : '';
+        if (!element) return '';
+        
+        // For phone inputs, return clean value if available
+        if ((id === 'residentPhone' || id === 'visitorPhone') && element.hasAttribute('data-clean-value')) {
+            return element.getAttribute('data-clean-value');
+        }
+        
+        return element.value.trim();
     }
 
     escapeHtml(text) {
@@ -889,8 +888,11 @@ class VisitorApp {
             residentNameInput.value = fullName;
         }
         
-        if (residentPhoneInput) {
+        if (residentPhoneInput && phoneNumber) {
+            // Set the clean value first
             residentPhoneInput.value = phoneNumber;
+            // Then format it
+            this.formatPhoneNumber(residentPhoneInput);
         }
         
         if (callBtn) {
@@ -969,7 +971,10 @@ class VisitorApp {
         }
         
         if (visitorPhoneInput && visitorPhone) {
+            // Set the clean value first
             visitorPhoneInput.value = visitorPhone;
+            // Then format it
+            this.formatPhoneNumber(visitorPhoneInput);
         }
         
         if (licensePlateInput && licensePlate) {
@@ -987,6 +992,56 @@ class VisitorApp {
             const formattedPhone = cleanPhone.startsWith('0') ? `+90${cleanPhone.substring(1)}` : `+90${cleanPhone}`;
             window.open(`tel:${formattedPhone}`);
         }
+    }
+
+    formatPhoneNumber(input) {
+        // Get only digits
+        let value = input.value.replace(/\D/g, '');
+        
+        // Limit to 11 digits for Turkish phone numbers
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
+        
+        // Apply Turkish phone number formatting
+        let formattedValue = '';
+        
+        if (value.length > 0) {
+            // Start with 0
+            if (value.length >= 1) {
+                formattedValue = value.substring(0, 1);
+            }
+            
+            // Add opening parenthesis and area code
+            if (value.length >= 2) {
+                formattedValue += ' (' + value.substring(1, 4);
+            }
+            
+            // Add closing parenthesis after area code
+            if (value.length >= 4) {
+                formattedValue += ')';
+            }
+            
+            // Add first part of number
+            if (value.length >= 5) {
+                formattedValue += ' ' + value.substring(4, 7);
+            }
+            
+            // Add second part of number
+            if (value.length >= 8) {
+                formattedValue += ' ' + value.substring(7, 9);
+            }
+            
+            // Add third part of number
+            if (value.length >= 10) {
+                formattedValue += ' ' + value.substring(9, 11);
+            }
+        }
+        
+        input.value = formattedValue;
+        
+        // Store the clean number for API calls
+        input.setAttribute('data-clean-value', value);
     }
 
     async sendSmsVerification() {
