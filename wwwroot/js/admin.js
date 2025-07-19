@@ -427,6 +427,12 @@ class AdminApp {
             if (togglePassword) {
                 togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
             }
+
+            // SMS Test events
+            const testSmsBtn = document.getElementById('testSmsBtn');
+            if (testSmsBtn) {
+                testSmsBtn.addEventListener('click', () => this.sendTestSms());
+            }
         }
 
         // Set default dates
@@ -2598,6 +2604,80 @@ class AdminApp {
         }
         
         return { isValid: true };
+    }
+
+    async sendTestSms() {
+        const phoneInput = document.getElementById('testPhoneNumber');
+        const messageInput = document.getElementById('testMessage');
+        const resultDiv = document.getElementById('smsTestResult');
+        const button = document.getElementById('testSmsBtn');
+
+        // Validate inputs
+        const phone = phoneInput.value.trim();
+        const message = messageInput.value.trim();
+
+        if (!phone) {
+            this.showError('Telefon numarası gerekli!');
+            return;
+        }
+
+        if (phone.length !== 10 || !phone.startsWith('5')) {
+            this.showError('Geçersiz telefon numarası! 5 ile başlayan 10 haneli numara girin.');
+            return;
+        }
+
+        if (!message) {
+            this.showError('Mesaj içeriği gerekli!');
+            return;
+        }
+
+        try {
+            // Disable button and show loading
+            button.disabled = true;
+            button.innerHTML = '<i class="bi bi-clock"></i> Gönderiliyor...';
+            resultDiv.style.display = 'none';
+
+            const response = await fetch(`${this.apiBase}/sms/test`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({
+                    phoneNumber: phone,
+                    message: message
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> ${data.bilgi}
+                        ${data.id ? `<br><small>SMS ID: ${data.id}</small>` : ''}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                this.showSuccess('Test SMS başarıyla gönderildi!');
+            } else {
+                throw new Error(data.message || 'SMS gönderim hatası');
+            }
+
+        } catch (error) {
+            console.error('SMS test error:', error);
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle"></i> Hata: ${error.message}
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            this.showError('SMS gönderim hatası: ' + error.message);
+        } finally {
+            // Re-enable button
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-send"></i> Test SMS Gönder';
+        }
     }
 
 }
