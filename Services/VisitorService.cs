@@ -357,13 +357,11 @@ namespace VisitorManagementSystem.Services
                 var totalVisitors = await query.CountAsync();
                 Console.WriteLine($"Total visitors in query: {totalVisitors}");
 
-                var stats = await query
+                var groupedStats = await query
                     .GroupBy(v => v.ApartmentNumber)
-                    .Select(g => new ApartmentVisitStatDto
-                    {
+                    .Select(g => new {
                         ApartmentNumber = g.Key,
                         VisitorCount = g.Count(),
-                        ActiveVisitorCount = g.Count(v => v.IsActive),
                         LastVisitDate = g.Max(v => v.CheckInTime),
                         MostFrequentVisitor = g.GroupBy(v => v.FullName)
                             .OrderByDescending(vg => vg.Count())
@@ -373,6 +371,24 @@ namespace VisitorManagementSystem.Services
                     .OrderByDescending(s => s.VisitorCount)
                     .Take(10)
                     .ToListAsync();
+
+                // Get active visitor counts separately for each apartment
+                var stats = new List<ApartmentVisitStatDto>();
+                foreach (var stat in groupedStats)
+                {
+                    var activeCount = await _context.Visitors
+                        .Where(v => v.ApartmentNumber == stat.ApartmentNumber && v.IsActive && v.CheckOutTime == null)
+                        .CountAsync();
+
+                    stats.Add(new ApartmentVisitStatDto
+                    {
+                        ApartmentNumber = stat.ApartmentNumber,
+                        VisitorCount = stat.VisitorCount,
+                        ActiveVisitorCount = activeCount,
+                        LastVisitDate = stat.LastVisitDate,
+                        MostFrequentVisitor = stat.MostFrequentVisitor
+                    });
+                }
 
                 Console.WriteLine($"Apartment stats result count: {stats.Count}");
                 foreach (var stat in stats)
@@ -520,11 +536,9 @@ namespace VisitorManagementSystem.Services
 
                 var groupedQuery = query
                     .GroupBy(v => v.ApartmentNumber)
-                    .Select(g => new ApartmentVisitStatDto
-                    {
+                    .Select(g => new {
                         ApartmentNumber = g.Key,
                         VisitorCount = g.Count(),
-                        ActiveVisitorCount = g.Count(v => v.IsActive),
                         LastVisitDate = g.Max(v => v.CheckInTime),
                         MostFrequentVisitor = g.GroupBy(v => v.FullName)
                             .OrderByDescending(vg => vg.Count())
@@ -535,10 +549,28 @@ namespace VisitorManagementSystem.Services
 
                 var totalCount = await groupedQuery.CountAsync();
 
-                var stats = await groupedQuery
+                var groupedStats = await groupedQuery
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
+
+                // Get active visitor counts separately for each apartment
+                var stats = new List<ApartmentVisitStatDto>();
+                foreach (var stat in groupedStats)
+                {
+                    var activeCount = await _context.Visitors
+                        .Where(v => v.ApartmentNumber == stat.ApartmentNumber && v.IsActive && v.CheckOutTime == null)
+                        .CountAsync();
+
+                    stats.Add(new ApartmentVisitStatDto
+                    {
+                        ApartmentNumber = stat.ApartmentNumber,
+                        VisitorCount = stat.VisitorCount,
+                        ActiveVisitorCount = activeCount,
+                        LastVisitDate = stat.LastVisitDate,
+                        MostFrequentVisitor = stat.MostFrequentVisitor
+                    });
+                }
 
                 return new PagedApartmentStatsDto
                 {
@@ -564,6 +596,23 @@ namespace VisitorManagementSystem.Services
             {
                 // Get all apartment stats without pagination
                 var stats = await GetMostVisitedApartmentsAsync(startDate, endDate);
+
+                // Get comprehensive statistics
+                var totalActiveVisitors = await _context.Visitors
+                    .Where(v => v.IsActive && v.CheckOutTime == null)
+                    .CountAsync();
+
+                var totalAllVisitors = await _context.Visitors.CountAsync();
+                var totalPassiveVisitors = totalAllVisitors - totalActiveVisitors;
+
+                // Get total visitors in the specified date range for context
+                var query = _context.Visitors.AsQueryable();
+                if (startDate.HasValue)
+                    query = query.Where(v => v.CheckInTime >= startDate.Value);
+                if (endDate.HasValue)
+                    query = query.Where(v => v.CheckInTime < endDate.Value.AddDays(1));
+                
+                var totalVisitsInDateRange = await query.CountAsync();
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 
@@ -599,10 +648,11 @@ namespace VisitorManagementSystem.Services
                 worksheet.Cells[row + 2, 1].Value = startDate.HasValue && endDate.HasValue 
                     ? $"Tarih Aralığı: {startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}"
                     : "Tüm Zamanlar";
-                worksheet.Cells[row + 3, 1].Value = $"Toplam Daire Sayısı: {stats.Count()}";
-                worksheet.Cells[row + 4, 1].Value = $"Toplam Ziyaret: {stats.Sum(s => s.VisitorCount)}";
-                worksheet.Cells[row + 5, 1].Value = $"Toplam Aktif Ziyaretçi: {stats.Sum(s => s.ActiveVisitorCount)}";
-                worksheet.Cells[row + 6, 1].Value = $"Rapor Tarihi: {DateTime.Now:dd.MM.yyyy HH:mm}";
+                worksheet.Cells[row + 3, 1].Value = $"Daire Sayısı: {stats.Count()}";
+                worksheet.Cells[row + 4, 1].Value = $"Toplam Ziyaret: {totalAllVisitors}";
+                worksheet.Cells[row + 5, 1].Value = $"Aktif Ziyaretçi: {totalActiveVisitors}";
+                worksheet.Cells[row + 6, 1].Value = $"Pasif Ziyaretçi: {totalPassiveVisitors}";
+                worksheet.Cells[row + 7, 1].Value = $"Rapor Tarihi: {DateTime.Now:dd.MM.yyyy HH:mm}";
 
                 return package.GetAsByteArray();
             }

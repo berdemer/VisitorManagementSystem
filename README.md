@@ -18,7 +18,8 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 ### Web Tabanlı Yönetici Paneli
 - ✅ **Dashboard**: İstatistiksel özet ve KPI'lar
 - ✅ **Ziyaretçi Yönetimi**: Geçmiş kayıt takibi ve filtreleme
-- ✅ **Raporlama**: Excel/CSV formatında detaylı raporlar
+- ✅ **Sayfalanmış Raporlama**: Pagination ile hızlı veri yönetimi
+- ✅ **Excel Raporları**: En Çok Ziyaret Alan Daireler istatistikleri
 - ✅ **Kullanıcı Yönetimi**: Rol bazlı yetkilendirme sistemi
 - ✅ **Şifre Yönetimi**: Admin tarafından merkezi şifre değiştirme
 - ✅ **Daire Sahipleri Modülü**: Kapsamlı sakin yönetimi
@@ -173,13 +174,18 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 ### Yönetici İşlemleri
 1. `/login.html` sayfasından sisteme giriş yapın
 2. Admin paneline otomatik yönlendirileceksiniz
-3. **Mevcut özellikler:**
+3. **Raporlar ve İstatistikler:**
+   - En Çok Ziyaret Alan Daireler tablosu
+   - Sayfalama: 3, 5, 10, 20 daire seçenekleri
+   - Pagination kontrolleri: Önceki/Sonraki butonları
+   - Excel İndir: Detaylı rapor indirme
+   - Tarih filtresi: Başlangıç/bitiş tarihi seçimi
+4. **Diğer özellikler:**
    - Ziyaretçi listesi ve yönetimi
    - İstatistiksel dashboard
    - Kullanıcı yönetimi (Admin)
    - Daire sahipleri yönetimi
    - Mail sistemi ayarları (Admin)
-   - Raporlama ve Excel export
    - Filtreleme ve arama
 
 ### Şifre Yönetimi
@@ -213,6 +219,9 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - `POST /api/visitor` - Yeni ziyaretçi kaydet (PUBLIC)
 - `POST /api/visitor/{id}/checkout` - Ziyaretçi çıkışı (AUTH)
 - `POST /api/visitor/upload-photo` - Fotoğraf yükle (PUBLIC)
+- `GET /api/visitor/export` - Excel raporu indir (AUTH)
+- `GET /api/visitor/apartment-stats` - **Daire istatistikleri pagination (AUTH)** 🆕
+- `GET /api/visitor/apartment-stats/export` - **Daire istatistikleri Excel raporu (AUTH)** 🆕
 - `DELETE /api/visitor/{id}` - Ziyaretçi sil (ADMIN)
 
 ### Kullanıcı İşlemleri
@@ -283,14 +292,21 @@ Site içi güvenliği artırmak ve giriş-çıkışları dijital olarak kayıt a
 - **SMS**: Id, PhoneNumber, Code, CreatedAt, ExpiresAt
 - **Durum**: IsUsed, IsValid, IsExpired, CreatedBy
 
-## Yeni Özellikler (v2.7)
+## Yeni Özellikler (v2.9)
 
-### 🚀 Son Güncellemeler (v2.8)
-- **✏️ Ziyaretçi Düzenleme Sistemi**: Aktif ziyaretçileri düzenleme özelliği 🆕
-- **🔄 Dinamik Form Modu**: Ekle/Düzenle modları arası geçiş 🆕
-- **🎨 Görsel Geri Bildirim**: Düzenleme modunda turuncu renk teması 🆕
-- **📋 Otomatik Form Doldurma**: Ziyaretçi bilgileri otomatik yüklenir 🆕
-- **💾 Güncelleme API**: PUT endpoint ile veritabanı güncelleme 🆕
+### 🚀 Son Güncellemeler (v2.9)
+- **📊 Daire İstatistikleri Pagination**: 3-5-10-20 sayfalama seçenekleri 🆕
+- **📈 Excel Rapor Geliştirmeleri**: En Çok Ziyaret Alan Daireler raporu 🆕
+- **⚡ Performans Optimizasyonu**: EF Core sorgu optimizasyonları 🆕
+- **📋 Temizlenmiş Rapor Formatı**: Tekrarlayan bilgiler kaldırıldı 🆕
+- **🎯 Doğru İstatistikler**: Aktif/pasif ziyaretçi sayıları düzeltildi 🆕
+
+### 🚀 Önceki Güncellemeler (v2.8)
+- **✏️ Ziyaretçi Düzenleme Sistemi**: Aktif ziyaretçileri düzenleme özelliği
+- **🔄 Dinamik Form Modu**: Ekle/Düzenle modları arası geçiş
+- **🎨 Görsel Geri Bildirim**: Düzenleme modunda turuncu renk teması
+- **📋 Otomatik Form Doldurma**: Ziyaretçi bilgileri otomatik yüklenir
+- **💾 Güncelleme API**: PUT endpoint ile veritabanı güncelleme
 
 ### 🚀 Önceki Güncellemeler (v2.7)
 - **📞 Sistem Genelinde Telefon Formatı Standardizasyonu**: Tutarlı telefon maskeleme
@@ -412,8 +428,8 @@ Bu proje özel kullanım için geliştirilmiştir.
 
 ---
 
-**Versiyon**: 2.8  
-**Son Güncelleme**: 2025-07-18  
+**Versiyon**: 2.9  
+**Son Güncelleme**: 2025-07-19  
 **Geliştirici**: Claude Code Assistant
 
 ## Sistem Durumu
@@ -424,8 +440,15 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **Static Files**: Aktif  
 ✅ **JWT Authentication**: Çalışıyor  
 ✅ **Mail Sistemi**: Yapılandırılabilir
-✅ **Daire Sahipleri Modülü**: Aktif
-✅ **Merkezi Şifre Yönetimi**: Aktif
+
+### 📊 Mevcut Sistem Verileri (2025-07-19)
+- **👥 Toplam Ziyaretçi**: 10 kayıt
+- **✅ Aktif Ziyaretçi**: 2 kişi  
+- **❌ Pasif Ziyaretçi**: 8 kişi
+- **🏢 Daire Sahibi**: 3 kayıt
+- **👤 Kullanıcı**: 3 aktif (Admin: 1, Manager: 1, Security: 1)
+
+### 🎯 Aktif Özellikler
 ✅ **🆕 Akıllı Daire Sistemi**: Aktif
 ✅ **🆕 Daire Sahibi Autocomplete**: Aktif
 ✅ **🆕 Ziyaretçi Autocomplete**: Aktif  
@@ -438,6 +461,8 @@ Bu proje özel kullanım için geliştirilmiştir.
 ✅ **🆕 E-posta Validasyonu**: Aktif
 ✅ **🆕 Otomatik Büyük Harf Dönüşümü**: Aktif
 ✅ **🆕 Sistem Genelinde Telefon Formatı Standardizasyonu**: Aktif
+✅ **🆕 Daire İstatistikleri Pagination**: Aktif
+✅ **🆕 Excel Rapor Optimizasyonu**: Aktif
 
 ### Çalıştırma Komutu
 ```bash
@@ -537,6 +562,22 @@ dotnet run --launch-profile http
    - **Geçersiz e-posta**: **"test@.com"** → **Hata: Geçersiz e-posta**
    - **Boş etiket**: İletişim bilgisi varken etiket boş → **Otomatik "İletişim 1, 2..." etiketi**
    - **Tüm alanlar doğru** olduğunda başarıyla kayıt olur
+
+#### Daire İstatistikleri Pagination Test (YENİ! 🆕):
+1. **http://localhost:5002/admin.html** - admin/admin123 ile giriş yapın
+2. **"Raporlar"** sekmesine geçin
+3. **En Çok Ziyaret Alan Daireler** bölümünde:
+   - **Gösterim Sayısı**: Dropdown'dan 3, 5, 10, 20 seçeneklerini test edin
+   - **Sayfa Değişimi**: Önceki/Sonraki butonları ile navigate edin
+   - **Tarih Filtresi**: Başlangıç/bitiş tarihlerini değiştirin
+   - **Excel İndir**: Butona tıklayarak raporu indirin
+4. **Excel Rapor İçeriği Test**:
+   - **Sıra, Daire No, Toplam Ziyaretçi, Aktif Ziyaretçi** kolonları
+   - **Rapor Özeti**: Tarih aralığı, daire sayısı, toplam/aktif/pasif ziyaretçi
+   - **Doğru Sayılar**: Toplam 10, Aktif 2, Pasif 8 gösterilir
+5. **Performans Test**:
+   - **Hızlı Yükleme**: Pagination değişimleri anında yüklenir
+   - **Responsive Tablo**: Mobil uyumlu görünüm
 10. **Görsel Geri Bildirim Test**:
     - **Hover Efektleri**: İletişim satırları üzerine gelince **mavi border** ve **gölge**
     - **Real-time Validation**: Yazarken anında **yeşil/kırmızı** geri bildirim
