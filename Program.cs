@@ -72,6 +72,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResidentService, ResidentService>();
 builder.Services.AddScoped<IMailSettingsService, MailSettingsService>();
 builder.Services.AddScoped<ISmsVerificationService, SmsVerificationService>();
+builder.Services.AddScoped<INotificationLogService, NotificationLogService>();
 
 var app = builder.Build();
 

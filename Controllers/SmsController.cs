@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text;
+using VisitorManagementSystem.Services;
 
 namespace VisitorManagementSystem.Controllers
 {
@@ -12,11 +13,13 @@ namespace VisitorManagementSystem.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<SmsController> _logger;
+        private readonly INotificationLogService _notificationLogService;
 
-        public SmsController(IConfiguration configuration, ILogger<SmsController> logger)
+        public SmsController(IConfiguration configuration, ILogger<SmsController> logger, INotificationLogService notificationLogService)
         {
             _configuration = configuration;
             _logger = logger;
+            _notificationLogService = notificationLogService;
         }
 
         [HttpPost]
@@ -103,6 +106,8 @@ namespace VisitorManagementSystem.Controllers
         [HttpPost("test")]
         public async Task<IActionResult> SendTestSms([FromBody] TestSmsRequest request)
         {
+            var currentUser = User.Identity?.Name ?? "System";
+            
             try
             {
                 string apiUserNameKey = _configuration["SmsSettings:Username"] ?? "";
@@ -118,6 +123,8 @@ namespace VisitorManagementSystem.Controllers
                 string sonuc = await smspak.gonder(apiUrl);
                 
                 MsjBilgisi msnj = new MsjBilgisi();
+                string status = "FAILED";
+                string? externalId = null;
 
                 if (sonuc == "20")
                     msnj = new MsjBilgisi() { Bilgi = "Post edilen xml eksik veya hatalı.", Id = null };
@@ -137,17 +144,47 @@ namespace VisitorManagementSystem.Controllers
                 {
                     string[] split = sonuc.Split('#');
                     msnj = new MsjBilgisi() { Bilgi = "SMS Başarılı " + split[1].ToString() + " Kredi kullanıldı.", Id = split[0] };
+                    status = "SUCCESS";
+                    externalId = split[0];
                 }
                 else 
                 {
                     msnj = new MsjBilgisi() { Bilgi = "Bilinmeyen yanıt: " + sonuc, Id = null };
                 }
 
+                // Log SMS
+                await _notificationLogService.LogSmsAsync(
+                    apartmentNumber: "TEST",
+                    visitorName: null,
+                    visitorPhone: null,
+                    recipientPhone: request.PhoneNumber,
+                    subject: "Test SMS",
+                    content: request.Message,
+                    status: status,
+                    errorMessage: status == "FAILED" ? msnj.Bilgi : null,
+                    externalId: externalId,
+                    sentBy: currentUser
+                );
+
                 return Ok(msnj);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Test SMS gönderim hatası");
+                
+                // Log failed SMS
+                await _notificationLogService.LogSmsAsync(
+                    apartmentNumber: "TEST",
+                    visitorName: null,
+                    visitorPhone: null,
+                    recipientPhone: request.PhoneNumber,
+                    subject: "Test SMS",
+                    content: request.Message,
+                    status: "FAILED",
+                    errorMessage: ex.Message,
+                    sentBy: currentUser
+                );
+                
                 return BadRequest(ex.Message.ToString() + " Sistem Hatası");
             }
         }

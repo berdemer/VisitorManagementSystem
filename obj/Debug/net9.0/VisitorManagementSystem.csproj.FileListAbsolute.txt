@@ -160,10 +160,8 @@
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/VisitorManagementSystem.MvcApplicationPartsAssemblyInfo.cache
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/VisitorManagementSystem.sourcelink.json
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/scopedcss/bundle/VisitorManagementSystem.styles.css
-/Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/jr9ud9ixb5-6stjqss4qt.gz
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/oebovnw8ta-hpk1w3gi8j.gz
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/6sdm3ni4j6-10g3j1l21l.gz
-/Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/h4qje3yuns-tqhl9bf018.gz
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/fviwqsf7nd-mjahp2qslr.gz
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/clpvgzkft5-vhlfjqva1p.gz
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/rlx5r4cu12-863s5ll8n4.gz
@@ -180,3 +178,5 @@
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/VisitorManagementSystem.pdb
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/VisitorManagementSystem.genruntimeconfig.cache
 /Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/ref/VisitorManagementSystem.dll
+/Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/jr9ud9ixb5-dzs3w6uh0r.gz
+/Volumes/Harici/testClaude/VisitorManagementSystem/obj/Debug/net9.0/compressed/h4qje3yuns-9t31dlj5ex.gz

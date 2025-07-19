@@ -18,6 +18,7 @@ namespace VisitorManagementSystem.Data
         public DbSet<MailSettings> MailSettings { get; set; }
         public DbSet<SmsSettings> SmsSettings { get; set; }
         public DbSet<SmsVerification> SmsVerifications { get; set; }
+        public DbSet<NotificationLog> NotificationLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -137,6 +138,42 @@ namespace VisitorManagementSystem.Data
                 entity.Property(e => e.CreatedBy).HasMaxLength(50);
                 entity.HasIndex(e => e.PhoneNumber);
                 entity.HasIndex(e => e.CreatedAt);
+            });
+
+            // NotificationLog configuration
+            modelBuilder.Entity<NotificationLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.NotificationType).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.ApartmentNumber).HasMaxLength(10);
+                entity.Property(e => e.VisitorName).HasMaxLength(200);
+                entity.Property(e => e.VisitorPhone).HasMaxLength(20);
+                entity.Property(e => e.RecipientEmail).HasMaxLength(200);
+                entity.Property(e => e.RecipientPhone).HasMaxLength(20);
+                entity.Property(e => e.Subject).HasMaxLength(500);
+                entity.Property(e => e.Content).IsRequired();
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.ErrorMessage).HasMaxLength(500);
+                entity.Property(e => e.ExternalId).HasMaxLength(100);
+                entity.Property(e => e.SentBy).HasMaxLength(100);
+                
+                // Relationships
+                entity.HasOne(e => e.Visitor)
+                      .WithMany()
+                      .HasForeignKey(e => e.VisitorId)
+                      .OnDelete(DeleteBehavior.SetNull);
+                      
+                entity.HasOne(e => e.Resident)
+                      .WithMany()
+                      .HasForeignKey(e => e.ResidentId)
+                      .OnDelete(DeleteBehavior.SetNull);
+                
+                // Indexes
+                entity.HasIndex(e => e.NotificationType);
+                entity.HasIndex(e => e.ApartmentNumber);
+                entity.HasIndex(e => e.SentAt);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => new { e.NotificationType, e.Status });
             });
 
             // Seed data removed - handled dynamically in Program.cs
