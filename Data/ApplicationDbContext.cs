@@ -16,6 +16,7 @@ namespace VisitorManagementSystem.Data
         public DbSet<User> Users { get; set; }
         public DbSet<VisitorLog> VisitorLogs { get; set; }
         public DbSet<MailSettings> MailSettings { get; set; }
+        public DbSet<SmsSettings> SmsSettings { get; set; }
         public DbSet<SmsVerification> SmsVerifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

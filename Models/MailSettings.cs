@@ -28,6 +28,7 @@ namespace VisitorManagementSystem.Models
         public string Username { get; set; } = string.Empty;
         
         [Required]
+        [StringLength(500)] // App passwords ve şifrelenmiş değerler için yeterli alan
         public string Password { get; set; } = string.Empty;
         
         [Required]

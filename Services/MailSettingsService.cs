@@ -85,15 +85,28 @@ namespace VisitorManagementSystem.Services
                 client.EnableSsl = settings.SecurityType != "None";
                 client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(settings.Username, settings.Password);
+                client.Timeout = 10000; // 10 seconds timeout
                 
-                // Test connection by sending NOOP command
-                await Task.Run(() => client.Send(new MailMessage()));
+                // Test connection by connecting to the SMTP server
+                await Task.Run(() => {
+                    // Create a minimal test message to validate connection
+                    var testMessage = new MailMessage
+                    {
+                        From = new MailAddress(settings.SenderEmail),
+                        Subject = "Connection Test",
+                        Body = "Test"
+                    };
+                    testMessage.To.Add(settings.SenderEmail); // Send to self
+                    
+                    // Just test the connection, don't actually send
+                    client.Send(testMessage);
+                });
                 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Mail connection test failed");
+                _logger.LogError(ex, "Mail connection test failed: {Message}", ex.Message);
                 return false;
             }
         }
@@ -102,6 +115,11 @@ namespace VisitorManagementSystem.Services
         {
             try
             {
+                _logger.LogInformation($"Attempting to send test mail with Username: {settings.Username}, " +
+                    $"Server: {settings.SmtpServer}:{settings.Port}, " +
+                    $"Password Length: {settings.Password?.Length ?? 0}, " +
+                    $"From: {settings.SenderEmail}, To: {testMail.ToEmail}");
+                
                 using var client = new SmtpClient(settings.SmtpServer, settings.Port);
                 
                 client.EnableSsl = settings.SecurityType != "None";

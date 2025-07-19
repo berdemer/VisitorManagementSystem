@@ -9,7 +9,7 @@ using OfficeOpenXml;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure URLs
-builder.WebHost.UseUrls("http://0.0.0.0:5002");
+builder.WebHost.UseUrls("http://localhost:5002");
 
 // Configure EPPlus license and disable GDI+ completely on macOS
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -33,6 +33,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddHttpClient();
 
 // Add CORS
 builder.Services.AddCors(options =>

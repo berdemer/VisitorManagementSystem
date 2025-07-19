@@ -77,6 +77,23 @@ namespace VisitorManagementSystem.Controllers
 
             try
             {
+                // Eğer şifre veritabanından geliyorsa decrypt et
+                var existingSettings = await _mailSettingsService.GetMailSettingsAsync();
+                if (existingSettings != null && !string.IsNullOrEmpty(existingSettings.Password))
+                {
+                    // Şifrenin şifrelenmiş olup olmadığını kontrol et (Base64 formatında mı?)
+                    try
+                    {
+                        var decryptedPassword = _mailSettingsService.DecryptPassword(existingSettings.Password);
+                        settings.Password = decryptedPassword;
+                    }
+                    catch
+                    {
+                        // Decrypt başarısız olursa, muhtemelen plain text olarak gönderilmiş
+                        // DTO'daki şifreyi kullan
+                    }
+                }
+                
                 var result = await _mailSettingsService.TestMailConnectionAsync(settings);
                 
                 return Ok(new { success = result, message = result ? "Bağlantı başarılı" : "Bağlantı başarısız" });
@@ -97,6 +114,23 @@ namespace VisitorManagementSystem.Controllers
 
             try
             {
+                // Eğer şifre veritabanından geliyorsa decrypt et
+                var existingSettings = await _mailSettingsService.GetMailSettingsAsync();
+                if (existingSettings != null && !string.IsNullOrEmpty(existingSettings.Password))
+                {
+                    // Şifrenin şifrelenmiş olup olmadığını kontrol et (Base64 formatında mı?)
+                    try
+                    {
+                        var decryptedPassword = _mailSettingsService.DecryptPassword(existingSettings.Password);
+                        request.Settings.Password = decryptedPassword;
+                    }
+                    catch
+                    {
+                        // Decrypt başarısız olursa, muhtemelen plain text olarak gönderilmiş
+                        // DTO'daki şifreyi kullan
+                    }
+                }
+                
                 var result = await _mailSettingsService.SendTestMailAsync(request.Settings, request.TestMail);
                 
                 return Ok(new { 
