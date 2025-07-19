@@ -86,15 +86,33 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection(); // Disabled for development
 app.UseCors("AllowAll");
-app.UseStaticFiles();
+
+// Configure static files with no cache for development
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            ctx.Context.Response.Headers.Append("Cache-Control", "no-cache, no-store, must-revalidate");
+            ctx.Context.Response.Headers.Append("Pragma", "no-cache");
+            ctx.Context.Response.Headers.Append("Expires", "0");
+        }
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Default route
-app.MapFallbackToFile("index.html");
+// Default route - redirect to admin.html
+app.MapGet("/", async context =>
+{
+    context.Response.Redirect("/admin.html");
+});
+
+app.MapFallbackToFile("admin.html");
 
 // Ensure database is created and seed data
 using (var scope = app.Services.CreateScope())
