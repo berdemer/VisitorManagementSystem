@@ -1,0 +1,38 @@
+# Build results
+bin/
+obj/
+out/
+
+# Visual Studio / Visual Studio Code
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Development settings with secrets
+appsettings.Development.json
+
+# User secrets
+secrets.json
